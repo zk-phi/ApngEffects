@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "baseUrl": "src",
+    "sourceMap": true,
+    "strict": true,
+    "target": "ES6",
+    "module": "ES2020",
+    "moduleResolution": "node",
+    "lib": [
+      "dom",
+      "webworker"
+    ]
+  }
+}

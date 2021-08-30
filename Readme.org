@@ -1,0 +1,41 @@
+http://zk-phi.github.io/apngtool
+
+** 開発者向け
+
+*** dev server
+
+: npm install
+: npm run start
+
+するとサーバーが立ち上がります。 https://localhost:8080 で確認できます。
+
+ソースをいじるとすぐに反映されます。
+
+*** ビルド
+
+: npm run build
+
+ビルドすると =./dist= ができます。そのまま静的サイトとしてデプロイできます。
+
+*** lint
+
+: npm run lint
+
+コーディングスタイルの揺れなどを自動検出します。
+
+: npm run fix
+
+で大部分は自動修正できます。
+
+プルリクを送る前に走らせておくのがおすすめです。
+
+*** Workflows
+
+GitHub Actions を使って自動でビルドしたり、 lint をかけたりするようにしてあります。
+
+- lint ... master を push したときに npm run lint
+- lint-pr ... プルリクを作ったときに reviewdog 経由で eslint, stylelint を回す
+- build ... master を push したときに npm run lint して gh-pages に push
+
+ビルド時、 GitHub Secrets に ~ROLLBAR_TOKEN~ をセットしておくと、エラーを
+rollbar から確認できます。
