@@ -22,10 +22,10 @@ type WebGLEffectOption = { label: string, value: WebGLEffect };
 type SpeedOption = { label: string, value: number };
 
 const DURATION_OPTIONS = [
-  { label: "超もっさり (2sec)", value: 2.0 },
-  { label: "もっさり (1.3sec)", value: 1.3 },
-  { label: "ふつう (0.8sec)", value: 0.8 },
-  { label: "さくさく (0.3sec)", value: 0.3 },
+  { label: "超ゆっくり (4sec)", value: 4 },
+  { label: "ゆっくり (2sec)", value: 2 },
+  { label: "ふつう (1sec)", value: 1 },
+  { label: "さくさく (0.5sec)", value: 0.5 },
 ];
 
 const FPS_OPTIONS = [
