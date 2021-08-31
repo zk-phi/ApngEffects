@@ -51,7 +51,7 @@ export default defineComponent({
   <div v-if="file" class="file">
     <File />
     {{ file.name }}
-    <IconButton v-if="removable" danger @click="onRemove">
+    <IconButton v-if="removable" type="danger" @click="onRemove">
       <Delete />
     </IconButton>
   </div>
