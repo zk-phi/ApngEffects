@@ -4,10 +4,10 @@ import shaderWipe from "../shaders/transitionWipe.glsl";
 
 const shader = webglEffectShader(shaderWipe.sourceCode);
 
-const webglTransitionWipe: WebGLEffect = (keyframe) => {
+const webglTransitionWipeIn: WebGLEffect = (keyframe) => {
   const program = webglLoadEffectShader(shader);
-  webglSetFloat(program, "keyframe", keyframe);
+  webglSetFloat(program, "keyframe", keyframe - 1);
   return program;
 };
 
-export default webglTransitionWipe;
+export default webglTransitionWipeIn;
