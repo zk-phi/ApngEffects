@@ -8,8 +8,10 @@ import webglStrobo from "../webgleffects/strobo";
 import webglFocusLine from "../webgleffects/focusLine";
 import webglGlitch from "../webgleffects/glitch";
 import webglMosaic from "../webgleffects/mosaic";
-import webglTransitionWipeOut from "../webgleffects/transitionWipeOut";
+import webglTransitionSlideOut from "../webgleffects/transitionSlideOut";
+import webglTransitionSlideIn from "../webgleffects/transitionSlideIn";
 import webglTransitionWipeIn from "../webgleffects/transitionWipeIn";
+import webglTransitionWipeOut from "../webgleffects/transitionWipeOut";
 
 export default [
   {
@@ -27,8 +29,10 @@ export default [
       { label: "モザイク", value: webglMosaic },
     ],
   }, {
-    label: "シーンチェンジ",
+    label: "シーン転換",
     effects: [
+      { label: "スライドイン", value: webglTransitionSlideIn },
+      { label: "スライドアウト", value: webglTransitionSlideOut },
       { label: "ワイプイン", value: webglTransitionWipeIn },
       { label: "ワイプアウト", value: webglTransitionWipeOut },
     ],

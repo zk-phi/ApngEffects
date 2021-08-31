@@ -1,13 +1,13 @@
 import { WebGLEffect } from "../types";
 import { webglEffectShader, webglLoadEffectShader, webglSetFloat } from "../utils/webgl";
-import shaderWipe from "../shaders/transitionWipe.glsl";
+import shaderSlide from "../shaders/transitionSlide.glsl";
 
-const shader = webglEffectShader(shaderWipe.sourceCode);
+const shader = webglEffectShader(shaderSlide.sourceCode);
 
-const webglTransitionWipeIn: WebGLEffect = (keyframe) => {
+const webglTransitionSlideOut: WebGLEffect = (keyframe) => {
   const program = webglLoadEffectShader(shader);
   webglSetFloat(program, "keyframe", keyframe);
   return program;
 };
 
-export default webglTransitionWipeIn;
+export default webglTransitionSlideOut;
