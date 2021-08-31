@@ -22,7 +22,6 @@ export default defineComponent({
   },
   props: {
     show: { type: Boolean, required: true },
-    title: { type: String, default: "テクスチャ" },
     width: { type: Number, required: true },
     height: { type: Number, required: true },
     defaultColor: { type: String, default: null },
@@ -114,7 +113,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <Card v-if="show" title="シーン２ (シーンチェンジ用)">
+  <Card v-if="show" title="待機画面など (シーン転換用)">
     <Space vertical xlarge full>
       <Fieldset label="背景">
         <Space vertical>
