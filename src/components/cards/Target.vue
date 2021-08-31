@@ -36,6 +36,14 @@ const FPS_OPTIONS = [
   { label: "超なめらか (60fps)", value: 60 },
 ];
 
+const CNUM_OPTIONS = [
+  { label: "超せつやく (64色)", value: 64 },
+  { label: "せつやく (128色)", value: 128 },
+  { label: "ふつう (256色)", value: 256 },
+  { label: "高画質 (512色)", value: 512 },
+  { label: "最高画質 (減色なし)", value: Infinity },
+];
+
 export default defineComponent({
   components: {
     EffectBlock,
@@ -65,6 +73,7 @@ export default defineComponent({
       webgleffects,
       DURATION_OPTIONS,
       FPS_OPTIONS,
+      CNUM_OPTIONS,
       conf: {
         /* basic */
         duration: DURATION_OPTIONS[2],
@@ -75,7 +84,7 @@ export default defineComponent({
         webglEffects: [] as WebGLEffectOption[],
         /* advanced */
         noCrop: false,
-        lossy: true,
+        cnum: CNUM_OPTIONS[2],
       },
       devMode: false,
     };
@@ -136,7 +145,7 @@ export default defineComponent({
           this.conf.animationInvert,
           this.conf.effects.map((eff) => eff.value),
           this.conf.webglEffects.map((eff) => eff.value),
-          this.conf.fps.value, framecount, this.conf.lossy, this.conf.animationLoop,
+          this.conf.fps.value, framecount, this.conf.cnum.value, this.conf.animationLoop,
         ).then((res) => {
           this.$emit("render", res);
         });
@@ -168,15 +177,15 @@ export default defineComponent({
                 v-model="conf.duration"
                 :options="DURATION_OPTIONS" />
           </Fieldset>
-          <Fieldset label="アニメなめらかさ">
+          <Fieldset label="クオリティ (アニメ)">
             <Select
                 v-model="conf.fps"
                 :options="FPS_OPTIONS" />
           </Fieldset>
-          <Fieldset label="開発者向け">
-            <Button danger type="text" @click="devMode = true">
-              開発者モード
-            </Button>
+          <Fieldset label="クオリティ (色数)">
+            <Select
+                v-model="conf.cnum"
+                :options="CNUM_OPTIONS" />
           </Fieldset>
         </Space>
       </GridItem>
@@ -184,6 +193,11 @@ export default defineComponent({
         <Space vertical xlarge full>
           <EffectBlock v-model="conf.webglEffects" :effects="webgleffects" />
           <EffectBlock v-model="conf.effects" :effects="effects" />
+          <Fieldset label="開発者向け">
+            <Button danger type="text" @click="devMode = true">
+              エフェクトエディタ
+            </Button>
+          </Fieldset>
         </Space>
       </GridItem>
     </Grid>

@@ -11,7 +11,7 @@ export default class APNGEncoder {
   private options: EncoderArgs;
   private dels: number[];
 
-  constructor({ w, h, cnum = 0, loops = Infinity }: EncoderArgs) {
+  constructor({ w, h, cnum = Infinity, loops = Infinity }: EncoderArgs) {
     this.worker = new Worker(new URL('./encoder.worker.ts', import.meta.url));
     this.frames = [];
     this.dels = [];
@@ -29,7 +29,7 @@ export default class APNGEncoder {
         this.frames,
         this.options.w,
         this.options.h,
-        this.options.cnum,
+        this.options.cnum === Infinity ? 0 : this.options.cnum,
         this.dels,
         this.options.loops === Infinity ? {} : { loop: this.options.loops },
       ]);

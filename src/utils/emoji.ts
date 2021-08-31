@@ -73,7 +73,7 @@ export function renderApng(
   webglEffects: WebGLEffect[],
   framerate: number,
   framecount: number,
-  lossy = true,
+  cnum = Infinity,
   loop = true,
 ) {
   if (encoder) {
@@ -85,7 +85,7 @@ export function renderApng(
     encoder = new APNGEncoder({
       w: targetWidth * (noCrop ? 2 : 1),
       h: targetHeight * (noCrop ? 2 : 1),
-      cnum: lossy ? 256 : 0,
+      cnum: cnum,
       loops: loop ? Infinity : 1,
     });
     const delayPerFrame = 1000 / framerate;
