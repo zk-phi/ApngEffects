@@ -25,5 +25,7 @@ export type WebGLEffect = (
   height: number,
 ) => WebGLProgram;
 
+export type Easing = (x: number) => number;
+
 // Gradient is a list of colorstops
 export type ColorStop = { color: string, pos: number };

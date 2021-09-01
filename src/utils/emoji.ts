@@ -1,5 +1,5 @@
 import APNGEncoder from "./encoder";
-import { Effect, WebGLEffect } from "../types";
+import { Effect, WebGLEffect, Easing } from "../types";
 import { webglApplyEffects, webglInitialize } from "./webgl";
 import { cropCanvas } from "./canvas";
 
@@ -68,6 +68,7 @@ export function renderApng(
   targetHeight: number,
   noCrop: boolean,
   animated: boolean,
+  easing: Easing,
   animationInvert: boolean,
   effects: Effect[],
   webglEffects: WebGLEffect[],
@@ -93,7 +94,7 @@ export function renderApng(
     for (let i = 0; i < framecount; i += 1) {
       const keyframe = animationInvert ? 1 - (i / denominator) : i / denominator;
       let frame = renderFrameUncut(
-        keyframe, image, subImage,
+        easing(keyframe), image, subImage,
         targetWidth, targetHeight, noCrop,
         animationInvert, effects, webglEffects,
         framerate, framecount,
