@@ -4,9 +4,10 @@ uniform sampler2D subTexture;
 varying vec2 vUv;
 
 uniform float keyframe;
+uniform vec2 direction;
 
 void main() {
-    float pos = vUv.x + .5 * keyframe;
+    float pos = dot(direction, vUv.xy) + .5 * keyframe;
     gl_FragColor = mix(
         texture2D(texture, vUv),
         texture2D(subTexture, vUv),

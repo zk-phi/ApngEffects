@@ -9,11 +9,11 @@ import shaderWipe from "../shaders/transitionWipe.glsl";
 
 const shader = webglEffectShader(shaderWipe.sourceCode);
 
-const webglTransitionWipeOut: WebGLEffect = (keyframe) => {
+const webglTransitionWipeVerticalOut: WebGLEffect = (keyframe) => {
   const program = webglLoadEffectShader(shader);
-  webglSetFloat(program, "keyframe", keyframe - 1);
-  webglSetVec2(program, "direction", [1, 0]);
+  webglSetFloat(program, "keyframe", - keyframe + 1);
+  webglSetVec2(program, "direction", [0, 1]);
   return program;
 };
 
-export default webglTransitionWipeOut;
+export default webglTransitionWipeVerticalOut;
