@@ -1,5 +1,10 @@
 import { WebGLEffect } from "../types";
-import { webglEffectShader, webglLoadEffectShader, webglSetFloat } from "../utils/webgl";
+import {
+  webglEffectShader,
+  webglLoadEffectShader,
+  webglSetFloat,
+  webglSetVec2,
+} from "../utils/webgl";
 import shaderSlide from "../shaders/transitionSlide.glsl";
 
 const shader = webglEffectShader(shaderSlide.sourceCode);
@@ -7,6 +12,7 @@ const shader = webglEffectShader(shaderSlide.sourceCode);
 const webglTransitionSlideIn: WebGLEffect = (keyframe) => {
   const program = webglLoadEffectShader(shader);
   webglSetFloat(program, "keyframe", keyframe - 1);
+  webglSetVec2(program, "direction", [1, 0]);
   return program;
 };
 
