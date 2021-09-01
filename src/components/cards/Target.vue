@@ -27,6 +27,7 @@ const DURATION_OPTIONS = [
   { label: "ゆっくり (2sec)", value: 2 },
   { label: "ふつう (1sec)", value: 1 },
   { label: "さくさく (0.5sec)", value: 0.5 },
+  { label: "一瞬 (0.25sec)", value: 0.25 },
 ];
 
 const FPS_OPTIONS = [
