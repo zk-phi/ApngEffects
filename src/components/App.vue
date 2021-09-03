@@ -97,7 +97,10 @@ export default defineComponent({
           <Space vertical>
             <Result :image="resultImage" />
             <Button v-if="baseImage" type="primary" @click="onDownload">
-              <Save /> APNG を保存
+              <template #icon>
+                <Save />
+              </template>
+              APNG を保存
             </Button>
           </Space>
         </GridItem>
