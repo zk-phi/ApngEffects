@@ -111,9 +111,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs:
-      - lint-css
-      - lint-js
-      - e2e-test
       - build-app
       - build-storybook
     steps:
