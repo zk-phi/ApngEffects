@@ -18,11 +18,10 @@
     "not IE 11"
   ],
   "dependencies": {
-    "@dhdbstjr98/gif.js": "^1.0.2",
     "color-convert": "^2.0.1",
     "file-saver": "^2.0.5",
-    "jszip": "^3.7.1",
     "rollbar": "^2.24.0",
+    "upng-js": "zk-phi/UPNG.js",
     "vue": "^3.1.5"
   },
   "devDependencies": {
@@ -32,7 +31,6 @@
     "@storybook/manager-webpack5": "^6.3.5",
     "@storybook/vue3": "^6.3.5",
     "@types/color-convert": "^2.0.0",
-    "@types/css-font-loading-module": "^0.0.6",
     "@types/file-saver": "^2.0.3",
     "@types/google.analytics": "^0.0.42",
     "@types/jest": "^26.0.24",

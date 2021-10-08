@@ -1,27 +1,22 @@
-import GIF from "@dhdbstjr98/gif.js";
-import { Animation, Effect, WebGLEffect } from "../types";
+import APNGEncoder from "./encoder";
+import { Effect, WebGLEffect } from "../types";
 import { webglApplyEffects, webglInitialize } from "./webgl";
-import { cropCanvas, cutoutCanvasIntoCells, fillTransparentPixels } from "./canvas";
+import { cropCanvas } from "./canvas";
 
 const webglEnabled = webglInitialize();
 
 function renderFrameUncut(
   keyframe: number,
-  image: HTMLImageElement,
-  offsetH: number,
-  offsetV: number,
-  width: number,
-  height: number,
+  image: HTMLCanvasElement,
+  subImage: HTMLCanvasElement,
   targetWidth: number,
   targetHeight: number,
   noCrop: boolean,
-  animation: Animation | null,
   animationInvert: boolean,
   effects: Effect[],
   webglEffects: WebGLEffect[],
   framerate: number,
   framecount: number,
-  fillStyle: string,
 ) {
   let canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d")!;
@@ -34,187 +29,85 @@ function renderFrameUncut(
     effect(keyframe, ctx, targetWidth * 2, targetHeight * 2);
   });
 
-  if (animation) {
-    animation(
-      keyframe,
-      ctx, image, offsetH, offsetV, width, height, targetWidth * 2, targetHeight * 2,
-    );
-  } else {
-    const left = offsetH - width / 2;
-    const top = offsetV - height / 2;
-    const targetLeft = left >= 0 ? 0 : -left * targetWidth / width;
-    const targetTop = top >= 0 ? 0 : -top * targetHeight / height;
-    ctx.drawImage(
-      image,
-      Math.max(0, left), Math.max(0, top), width * 2, height * 2,
-      targetLeft, targetTop, targetWidth * 2, targetHeight * 2,
-    );
-  }
+  ctx.drawImage(
+    image,
+    0, 0, image.width, image.height,
+    targetWidth / 2, targetHeight / 2, targetWidth, targetHeight,
+  );
 
   if (webglEffects.length && webglEnabled) {
-    canvas = webglApplyEffects(canvas, keyframe, webglEffects);
+    let subCanvas = document.createElement("canvas");
+    subCanvas.width = targetWidth * 2;
+    subCanvas.height = targetHeight * 2;
+    subCanvas.getContext("2d")!.drawImage(
+      subImage,
+      0, 0, image.width, image.height,
+      targetWidth / 2, targetHeight / 2, targetWidth, targetHeight,
+    );
+    canvas = webglApplyEffects(canvas, subCanvas, keyframe, webglEffects);
   }
 
   if (noCrop) {
-    // copy webglCanvas content with background
-    return cropCanvas(canvas, 0, 0, targetWidth * 2, targetHeight * 2, fillStyle);
+    // copy webglCanvas content
+    return cropCanvas(canvas, 0, 0, targetWidth * 2, targetHeight * 2);
   } else {
-    return cropCanvas(
-      canvas,
-      targetWidth / 2, targetHeight / 2, targetWidth, targetHeight,
-      fillStyle,
-    );
+    return cropCanvas(canvas, targetWidth / 2, targetHeight / 2, targetWidth, targetHeight);
   }
 }
 
-let encoders: GIF[][] | null = null;
+let encoder: APNGEncoder | null = null;
 
 /**
  * ASYNC:
  * returns a 2d-array of (possibly animated) images of specified size (tragetSize).
- * each images may exceed binarySizeLimit.
  */
-function renderAllCellsFixedSize(
-  image: HTMLImageElement,
-  offsetH: number,
-  offsetV: number,
-  hCells: number,
-  vCells: number,
-  srcWidth: number,
-  srcHeight: number,
-  targetSize: number,
+export function renderApng(
+  image: HTMLCanvasElement,
+  subImage: HTMLCanvasElement,
+  targetWidth: number,
+  targetHeight: number,
   noCrop: boolean,
   animated: boolean,
-  animation: Animation | null,
   animationInvert: boolean,
   effects: Effect[],
   webglEffects: WebGLEffect[],
   framerate: number,
   framecount: number,
-  backgroundColor: string,
-  transparent: boolean,
+  lossy = true,
+  loop = true,
 ) {
-  if (!animated) {
-    const img = renderFrameUncut(
-      0, image,
-      offsetH, offsetV, srcWidth, srcHeight,
-      targetSize * hCells, targetSize * vCells, noCrop,
-      animation, animationInvert, effects, webglEffects,
-      framerate, framecount,
-      transparent ? "rgba(0, 0, 0, 0)" : backgroundColor,
-    );
-    const cells = noCrop ? (
-      cutoutCanvasIntoCells(img, 0, 0, hCells, vCells, targetSize * 2, targetSize * 2)
-    ) : (
-      cutoutCanvasIntoCells(img, 0, 0, hCells, vCells, targetSize, targetSize)
-    );
-    return Promise.all<Blob[]>(cells.map((row) => (
-      Promise.all<Blob>(row.map((cell) => (
-        new Promise((resolve) => cell.toBlob((blob) => resolve(blob!)))
-      )))
-    )));
-  } else {
-    if (encoders) {
-      encoders.forEach((row) => { row.forEach((encoder) => encoder.abort()); });
-    }
-    encoders = [];
-    /* instantiate GIF encoders for each cells */
-    for (let y = 0; y < vCells; y += 1) {
-      const row = [];
-      for (let x = 0; x < hCells; x += 1) {
-        const encoder = new GIF({
-          transparent: transparent ? 0xffffff : null,
-          width: targetSize * (noCrop ? 2 : 1),
-          height: targetSize * (noCrop ? 2 : 1),
-        });
-        row.push(encoder);
-      }
-      encoders.push(row);
-    }
-    const delayPerFrame = 1000 / framerate;
-    for (let i = 0; i < framecount; i += 1) {
-      const keyframe = animationInvert ? 1 - (i / framecount) : i / framecount;
-      const frame = renderFrameUncut(
-        keyframe, image,
-        offsetH, offsetV, srcWidth, srcHeight,
-        targetSize * hCells, targetSize * vCells, noCrop,
-        animation, animationInvert, effects, webglEffects,
-        framerate, framecount,
-        transparent ? "rgba(0, 0, 0, 0)" : backgroundColor,
-      );
-      if (transparent) {
-        fillTransparentPixels(frame, "#ffffff");
-      }
-      const imgCells = noCrop ? (
-        cutoutCanvasIntoCells(frame, 0, 0, hCells, vCells, targetSize * 2, targetSize * 2)
-      ) : (
-        cutoutCanvasIntoCells(frame, 0, 0, hCells, vCells, targetSize, targetSize)
-      );
-      for (let y = 0; y < vCells; y += 1) {
-        for (let x = 0; x < hCells; x += 1) {
-          encoders[y][x].addFrame(imgCells[y][x].getContext("2d")!, { delay: delayPerFrame });
-        }
-      }
-    }
-    return Promise.all<Blob[]>(encoders.map((row) => Promise.all<Blob>(row.map((cell) => (
-      new Promise((resolve) => {
-        cell.on("finished", (ret) => {
-          resolve(ret);
-          encoders = null;
-        });
-        cell.render();
-      })
-    )))));
+  if (encoder) {
+    encoder.abort();
   }
-}
-
-/* ASYNC: returns a 2d-array of (possibly animated) images. */
-export function renderAllCells(
-  image: HTMLImageElement,
-  offsetH: number,
-  offsetV: number,
-  hCells: number,
-  vCells: number,
-  srcWidth: number,
-  srcHeight: number,
-  maxSize: number,
-  noCrop: boolean,
-  animated: boolean,
-  animation: Animation | null,
-  animationInvert: boolean,
-  effects: Effect[],
-  webglEffects: WebGLEffect[],
-  framerate: number,
-  framecount: number,
-  backgroundColor: string,
-  transparent: boolean,
-  binarySizeLimit: number,
-): Promise<Blob[][]> {
-  return new Promise((resolve) => {
-    renderAllCellsFixedSize(
-      image, offsetH, offsetV, hCells, vCells, srcWidth, srcHeight, maxSize, noCrop,
-      animated, animation, animationInvert, effects, webglEffects,
-      framerate, framecount,
-      backgroundColor, transparent,
-    ).then((ret) => {
-      /**
-       * If a cell exceeds the limitation, retry with smaller cell size.
-       * This does not happen in most cases.
-       */
-      const shouldRetry = ret.some((row) => row.some((cell: Blob) => (
-        cell.size >= binarySizeLimit
-      )));
-      if (shouldRetry) {
-        renderAllCells(
-          image, offsetH, offsetV, hCells, vCells, srcWidth, srcHeight, maxSize * 0.9, noCrop,
-          animated, animation, animationInvert, effects, webglEffects,
-          framerate, framecount,
-          backgroundColor, transparent,
-          binarySizeLimit,
-        ).then(resolve);
-      } else {
-        resolve(ret);
-      }
+  if (!animated) {
+    return new Promise((resolve) => image.toBlob((blob) => resolve(blob!)));
+  } else {
+    encoder = new APNGEncoder({
+      w: targetWidth * (noCrop ? 2 : 1),
+      h: targetHeight * (noCrop ? 2 : 1),
+      cnum: lossy ? 256 : 0,
+      loops: loop ? Infinity : 1,
     });
-  });
+    const delayPerFrame = 1000 / framerate;
+    const denominator = framecount - (loop ? 0 : 1);
+    for (let i = 0; i < framecount; i += 1) {
+      const keyframe = animationInvert ? 1 - (i / denominator) : i / denominator;
+      let frame = renderFrameUncut(
+        keyframe, image, subImage,
+        targetWidth, targetHeight, noCrop,
+        animationInvert, effects, webglEffects,
+        framerate, framecount,
+      );
+      if (!noCrop) {
+        frame = cropCanvas(frame, 0, 0, targetWidth, targetHeight);
+      }
+      encoder.addFrame(frame.getContext("2d")!, delayPerFrame);
+    }
+    return new Promise((resolve) => {
+      encoder!.render().then((ret) => {
+        encoder = null;
+        resolve(ret);
+      });
+    });
+  }
 }

@@ -1,9 +1,5 @@
 <script lang="ts">
-import { defineComponent } from "vue";
-import RawResult from "../emoji/RawResult.vue";
-import Preview from "../emoji/Preview.vue";
-import Checkbox from "../inputs/Checkbox.vue";
-import Space from "../global/Space.vue";
+import { defineComponent, PropType } from "vue";
 import Card from "../global/Card.vue";
 
 const transparentBg = {
@@ -17,29 +13,33 @@ const transparentBg = {
 
 export default defineComponent({
   components: {
-    RawResult, Preview, Checkbox, Card, Space,
+    Card,
   },
   props: {
-    images: { type: Array, required: true },
+    image: { type: Object as PropType<Blob>, default: null },
   },
-  data() {
-    return {
-      transparentBg,
-      previewMode: false,
-    };
+  data: () => ({
+    transparentBg,
+  }),
+  computed: {
+    src(): string | null {
+      return this.image ? URL.createObjectURL(this.image) : null;
+    },
   },
 });
 </script>
 
 <template>
-  <Card :style="transparentBg" title="絵文字">
-    <Space vertical>
-      <RawResult v-if="!previewMode" :images="images" />
-      <Preview v-if="previewMode" :images="images" :dark-mode="false" />
-      <Preview v-if="previewMode" :images="images" :dark-mode="true" />
-      <Checkbox v-model="previewMode">
-        {{ "プレビューモード" }}
-      </Checkbox>
-    </Space>
+  <Card :style="transparentBg" title="プレビュー">
+    <img v-if="image" class="result" :src="src" />
+    <p v-if="image">
+      {{ Math.ceil(image.size / 1024) }} KiB
+    </p>
   </Card>
 </template>
+
+<style scoped>
+.result {
+  border: 1px solid var(--border);
+}
+</style>

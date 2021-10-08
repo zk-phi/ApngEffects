@@ -47,13 +47,13 @@ export default defineComponent({
 }
 
 .default {
-  color: var(--fg);
-  border-color: var(--border);
+  color: var(--buttonColorBase);
+  border-color: var(--buttonColorBase);
 }
 
 .default:hover {
-  color: var(--buttonColorBase);
-  border-color: var(--buttonColorBase);
+  color: var(--buttonColorHover);
+  border-color: var(--buttonColorHover);
 }
 
 .default:active {

@@ -2,14 +2,17 @@
 import { defineComponent } from "vue";
 import { urlToImg, loadFileAsBlobURL } from "../../utils/canvas";
 import Button from "./Button.vue";
+import IconButton from "./IconButton.vue";
 import File from "../icons/File.vue";
+import Delete from "../icons/Delete.vue";
 
 export default defineComponent({
   components: {
-    Button, File,
+    Button, IconButton, File, Delete,
   },
   props: {
     label: { type: String, default: undefined },
+    removable: { type: Boolean, default: false },
   },
   emits: [
     "load",
@@ -31,6 +34,11 @@ export default defineComponent({
         });
       }
     },
+    onRemove(): void {
+      this.file = null;
+      (this.$refs.input as HTMLInputElement).value = "";
+      this.$emit("load", null);
+    },
   },
 });
 </script>
@@ -41,7 +49,11 @@ export default defineComponent({
     <slot />
   </Button>
   <div v-if="file" class="file">
-    <File /> {{ file.name }}
+    <File />
+    {{ file.name }}
+    <IconButton v-if="removable" danger @click="onRemove">
+      <Delete />
+    </IconButton>
   </div>
 </template>
 

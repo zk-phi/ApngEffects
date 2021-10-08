@@ -12,6 +12,13 @@ img.src = image;
 export const Base = (args) => ({
   components: { Target },
   data: () => args,
-  template: "<Target :show='show' :base-image='baseImage' />",
+  template: `
+    <Target
+      :show="show"
+      :base-image="baseImage"
+      :sub-image="subImage"
+      :width="300"
+      :height="300" />
+  `,
 });
-Base.args = { show: true, baseImage: img };
+Base.args = { show: true, baseImage: img, subImage: img };

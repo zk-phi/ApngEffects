@@ -1,7 +1,4 @@
 import effectBlink from "../effects/blink";
-import effectShadowBlur from "../effects/shadowBlur";
-import effectShadowNeon from "../effects/shadowNeon";
-import effectShadowRotate from "../effects/shadowRotate";
 import effectPatapata from "../effects/patapata";
 import effectRoulette from "../effects/roulette";
 import effectNeruneru from "../effects/neruneru";
@@ -28,13 +25,6 @@ export default [
       { label: "もちもち", value: effectMotimoti },
       { label: "BLINK", value: effectBlink },
       { label: "直球", value: effectStraight },
-    ],
-  }, {
-    label: "シャドウ",
-    effects: [
-      { label: "ぐるぐる", value: effectShadowRotate },
-      { label: "ブラー", value: effectShadowBlur },
-      { label: "ネオン", value: effectShadowNeon },
     ],
   },
 ];

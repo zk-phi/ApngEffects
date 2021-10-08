@@ -104,6 +104,10 @@ export function webglEffectShader(fragmentShader: string): EffectShader {
       const uv = gl.getAttribLocation(program, "uv");
       gl.enableVertexAttribArray(uv);
       gl.vertexAttribPointer(uv, 2, gl.FLOAT, false, 4 * u, 2 * u);
+      const tex1 = gl.getUniformLocation(program, "texture");
+      gl.uniform1i(tex1, 0);
+      const tex2 = gl.getUniformLocation(program, "subTexture");
+      gl.uniform1i(tex2, 1);
       return program;
     }
   };
@@ -178,9 +182,16 @@ function webglDeleteFrameBuffer(buf: FrameBufferWithTexture) {
 }
 
 // render texture in framebuffer (or webglCanvas if frame=null)
-function draw(texture: WebGLTexture, frame: WebGLFramebuffer | null) {
+function draw(
+  texture: WebGLTexture,
+  subTexture: WebGLTexture,
+  frame: WebGLFramebuffer | null
+) {
   if (!gl) throw new Error("WebGL not initialized");
+  gl.activeTexture(gl.TEXTURE0);
   gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.activeTexture(gl.TEXTURE1);
+  gl.bindTexture(gl.TEXTURE_2D, subTexture);
   gl.bindFramebuffer(gl.FRAMEBUFFER, frame);
   gl.drawArrays(gl.TRIANGLES, 0, 6);
 }
@@ -189,7 +200,10 @@ function draw(texture: WebGLTexture, frame: WebGLFramebuffer | null) {
 
 // apply effects on image and render in webglCanvas
 export function webglApplyEffects(
-  image: HTMLCanvasElement, keyframe: number, effects: WebGLEffect[],
+  image: HTMLCanvasElement,
+  subImage: HTMLCanvasElement,
+  keyframe: number,
+  effects: WebGLEffect[],
 ): HTMLCanvasElement {
   if (!webglCanvas || !gl) throw new Error("WebGL not initialized");
 
@@ -211,12 +225,15 @@ export function webglApplyEffects(
   const texture = webglTexture();
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 
+  const subTexture = webglTexture();
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, subImage);
+
   effects.forEach((effect, ix) => {
     const initialp = ix === 0;
     const lastp = ix === effects.length - 1;
     const program = effect(keyframe, w, h);
     webglSetFloat(program, "flipY", lastp ? -1 : 1); // set vertex shader arg
-    draw(initialp ? texture : prevBuf.texture, lastp ? null : nextBuf.frame);
+    draw(initialp ? texture : prevBuf.texture, subTexture, lastp ? null : nextBuf.frame);
     swapBufs();
   });
 
