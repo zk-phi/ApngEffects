@@ -73,29 +73,6 @@ export const shrinkCanvas = (source: HTMLCanvasElement): HTMLCanvasElement => {
   return cropCanvas(source, left, top, (right - left + 1) || 1, (bottom - top + 1) || 1);
 };
 
-/* Split canvas into a 2d-array of canvases */
-export const cutoutCanvasIntoCells = (
-  source: HTMLCanvasElement,
-  offsetH: number, offsetV: number,
-  hCells: number, vCells: number, cellWidth: number, cellHeight: number,
-): HTMLCanvasElement[][] => {
-  const cells = [];
-  for (let y = 0; y < vCells; y += 1) {
-    const row = [];
-    for (let x = 0; x < hCells; x += 1) {
-      row.push(
-        cropCanvas(
-          source,
-          offsetH + x * cellWidth, offsetV + y * cellHeight,
-          cellWidth, cellHeight,
-        ),
-      );
-    }
-    cells.push(row);
-  }
-  return cells;
-};
-
 /* Merge images into one image and return as a BlobURL. */
 export const mergeImages = (
   w: number, h: number, srcs: string[], callback: (bloburl: string) => void,

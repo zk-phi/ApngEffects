@@ -1,7 +1,7 @@
 import APNGEncoder from "./encoder";
 import { Effect, WebGLEffect } from "../types";
 import { webglApplyEffects, webglInitialize } from "./webgl";
-import { cropCanvas, cutoutCanvasIntoCells } from "./canvas";
+import { cropCanvas } from "./canvas";
 
 const webglEnabled = webglInitialize();
 
@@ -46,7 +46,7 @@ function renderFrameUncut(
   }
 }
 
-let encoders: APNGEncoder[][] | null = null;
+let encoder: APNGEncoder | null = null;
 
 /**
  * ASYNC:
@@ -54,8 +54,6 @@ let encoders: APNGEncoder[][] | null = null;
  */
 export function renderAllCells(
   image: HTMLImageElement,
-  hCells: number,
-  vCells: number,
   targetSize: number,
   noCrop: boolean,
   animated: boolean,
@@ -68,67 +66,37 @@ export function renderAllCells(
   loop = true,
 ) {
   if (!animated) {
-    const img = renderFrameUncut(
-      0, image,
-      targetSize * hCells, targetSize * vCells, noCrop,
-      animationInvert, effects, webglEffects,
-      framerate, framecount,
-    );
-    const cells = noCrop ? (
-      cutoutCanvasIntoCells(img, 0, 0, hCells, vCells, targetSize * 2, targetSize * 2)
-    ) : (
-      cutoutCanvasIntoCells(img, 0, 0, hCells, vCells, targetSize, targetSize)
-    );
-    return Promise.all<Blob[]>(cells.map((row) => (
-      Promise.all<Blob>(row.map((cell) => (
-        new Promise((resolve) => cell.toBlob((blob) => resolve(blob!)))
-      )))
-    )));
+    return new Promise((resolve) => image.toBlob((blob) => resolve(blob!)));
   } else {
-    if (encoders) {
-      encoders.forEach((row) => { row.forEach((encoder) => encoder.abort()); });
+    if (encoder) {
+      encoder.abort();
     }
-    encoders = [];
-    /* instantiate APNG encoders for each cells */
-    for (let y = 0; y < vCells; y += 1) {
-      const row = [];
-      for (let x = 0; x < hCells; x += 1) {
-        const encoder = new APNGEncoder({
-          w: targetSize * (noCrop ? 2 : 1),
-          h: targetSize * (noCrop ? 2 : 1),
-          cnum: cnum,
-          loops: loop ? Infinity : 1,
-        });
-        row.push(encoder);
-      }
-      encoders.push(row);
-    }
+    encoder = new APNGEncoder({
+      w: targetWidth * (noCrop ? 2 : 1),
+      h: targetHeight * (noCrop ? 2 : 1),
+      cnum: cnum,
+      loops: loop ? Infinity : 1,
+    });
     const delayPerFrame = 1000 / framerate;
     const denominator = framecount - (loop ? 0 : 1);
     for (let i = 0; i < framecount; i += 1) {
       const keyframe = animationInvert ? 1 - (i / denominator) : i / denominator;
-      const frame = renderFrameUncut(
+      let frame = renderFrameUncut(
         keyframe, image,
-        targetSize * hCells, targetSize * vCells, noCrop,
+        targetSize, targetSize, noCrop,
         animationInvert, effects, webglEffects,
         framerate, framecount,
       );
-      const imgCells = noCrop ? (
-        cutoutCanvasIntoCells(frame, 0, 0, hCells, vCells, targetSize * 2, targetSize * 2)
-      ) : (
-        cutoutCanvasIntoCells(frame, 0, 0, hCells, vCells, targetSize, targetSize)
-      );
-      for (let y = 0; y < vCells; y += 1) {
-        for (let x = 0; x < hCells; x += 1) {
-          encoders[y][x].addFrame(imgCells[y][x].getContext("2d")!, delayPerFrame);
-        }
+      if (!noCrop) {
+        frame = cropCanvas(frame, 0, 0, targetSize, targetSize);
       }
+      encoder.addFrame(frame.getContext("2d")!, delayPerFrame);
     }
-    return Promise.all<Blob[]>(encoders.map((row) => Promise.all<Blob>(row.map((cell) => (
-      cell.render().then((ret) => {
+    return new Promise((resolve) => {
+      encoder!.render().then((ret) => {
+        encoder = null;
         resolve(ret);
-        encoders = null;
-      })
-    )))));
+      });
+    });
   }
 }

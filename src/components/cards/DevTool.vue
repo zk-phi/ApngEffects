@@ -118,7 +118,7 @@ export default defineComponent({
       </Fieldset>
       <Fieldset label="デバッグ">
         <Checkbox :model-value="noCrop" @update:model-value="$emit('update:noCrop', $event)">
-          {{ "余白を切らない" }}
+          {{ "余白を切らない (効果適用時のみ)" }}
         </Checkbox>
       </Fieldset>
       <Button type="text" @click="$emit('close')">

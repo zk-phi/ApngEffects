@@ -1,6 +1,5 @@
 <script lang="ts">
-import { defineComponent } from "vue";
-import RawResult from "../emoji/RawResult.vue";
+import { defineComponent, PropType } from "vue";
 import Card from "../global/Card.vue";
 
 const transparentBg = {
@@ -14,19 +13,30 @@ const transparentBg = {
 
 export default defineComponent({
   components: {
-    RawResult, Card,
+    Card,
   },
   props: {
-    images: { type: Array, required: true },
+    image: { type: Object as PropType<Blob>, default: null },
   },
   data: () => ({
     transparentBg,
   }),
+  computed: {
+    src(): string | null {
+      return this.image ? URL.createObjectURL(this.image) : null;
+    },
+  },
 });
 </script>
 
 <template>
   <Card :style="transparentBg" title="絵文字">
-    <RawResult :images="images" />
+    <img v-if="image" class="result" :src="src" />
   </Card>
 </template>
+
+<style scoped>
+.result {
+  border: 1px solid var(--border);
+}
+</style>

@@ -20,7 +20,7 @@ import Save from "./icons/Save.vue";
 import Image from "./icons/Image.vue";
 import Text from "./icons/Text.vue";
 import Emoji from "./icons/Emoji.vue";
-import { extension, prepareDownloadFile } from "../utils/file";
+import { extension } from "../utils/file";
 import "../css/destyle.css";
 
 export default defineComponent({
@@ -48,7 +48,7 @@ export default defineComponent({
   data() {
     return {
       baseImage: null as (HTMLImageElement | null),
-      resultImages: [[]] as Blob[][],
+      resultImage: null as Blob | null,
       previewMode: false,
       /* ui */
       ui: {
@@ -58,11 +58,6 @@ export default defineComponent({
       },
     };
   },
-  computed: {
-    resultImageUrls(): string[][] {
-      return this.resultImages.map((row) => row.map((cell) => URL.createObjectURL(cell)));
-    },
-  },
   methods: {
     onSetShowTarget(value: boolean): void {
       this.ui.showTargetPanel = value;
@@ -71,15 +66,16 @@ export default defineComponent({
       this.ui.mode = value;
       this.ui.showTargetPanel = false;
     },
-    onRenderTarget(imgs: Blob[][]): void {
-      this.resultImages = imgs;
+    onRenderTarget(img: Blob): void {
+      this.resultImage = img;
     },
     onRender(img: HTMLImageElement): void {
       this.baseImage = img;
     },
     onDownload(): void {
-      const download = prepareDownloadFile(this.resultImages);
-      download.then((res) => saveAs(res, `megamoji.${extension(res)}`));
+      if (this.resultImage) {
+        saveAs(this.resultImage, `apngeffects.${extension(this.resultImage)}`);
+      }
     },
   },
 });
@@ -120,7 +116,7 @@ export default defineComponent({
         </GridItem>
         <GridItem>
           <Space vertical>
-            <Result :images="resultImageUrls" />
+            <Result :image="resultImage" />
             <Space>
               <Button @click="onSetShowTarget(!ui.showTargetPanel)">
                 <span v-if="ui.showTargetPanel">

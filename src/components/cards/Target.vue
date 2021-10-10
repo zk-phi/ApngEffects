@@ -1,7 +1,6 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import EffectBlock from "../formblocks/EffectBlock.vue";
-import CellcountBlock from "../formblocks/CellcountBlock.vue";
 import Button from "../inputs/Button.vue";
 import Select from "../inputs/Select.vue";
 import Checkbox from "../inputs/Checkbox.vue";
@@ -40,7 +39,6 @@ export default defineComponent({
   components: {
     EffectBlock,
     Checkbox,
-    CellcountBlock,
     Card,
     Button,
     Grid,
@@ -65,7 +63,6 @@ export default defineComponent({
       conf: {
         /* basic */
         speed: SPEED_OPTIONS[2],
-        cells: [1, 1],
         animationInvert: false,
         effects: [] as EffectOption[],
         webglEffects: [] as WebGLEffectOption[],
@@ -115,7 +112,6 @@ export default defineComponent({
         const maxSize = animated ? ANIMATED_EMOJI_SIZE : EMOJI_SIZE;
         renderAllCells(
           this.baseImage,
-          this.conf.cells[0], this.conf.cells[1],
           maxSize, this.conf.noCrop,
           animated,
           this.conf.animationInvert,
@@ -154,9 +150,6 @@ export default defineComponent({
       </GridItem>
       <GridItem>
         <Space vertical xlarge full>
-          <CellcountBlock
-              v-if="showDetails"
-              v-model="conf.cells" />
           <Fieldset v-if="!showDetails" label="アニメ速度">
             <Select
                 v-model="conf.speed"
