@@ -8,10 +8,6 @@ const webglEnabled = webglInitialize();
 function renderFrameUncut(
   keyframe: number,
   image: HTMLImageElement,
-  offsetH: number,
-  offsetV: number,
-  width: number,
-  height: number,
   targetWidth: number,
   targetHeight: number,
   noCrop: boolean,
@@ -32,14 +28,10 @@ function renderFrameUncut(
     effect(keyframe, ctx, targetWidth * 2, targetHeight * 2);
   });
 
-  const left = offsetH - width / 2;
-  const top = offsetV - height / 2;
-  const targetLeft = left >= 0 ? 0 : -left * targetWidth / width;
-  const targetTop = top >= 0 ? 0 : -top * targetHeight / height;
   ctx.drawImage(
     image,
-    Math.max(0, left), Math.max(0, top), width * 2, height * 2,
-    targetLeft, targetTop, targetWidth * 2, targetHeight * 2,
+    0, 0, image.width, image.height,
+    targetWidth / 2, targetHeight / 2, targetWidth, targetHeight,
   );
 
   if (webglEffects.length && webglEnabled) {
@@ -63,12 +55,8 @@ let encoders: APNGEncoder[][] | null = null;
  */
 function renderAllCellsFixedSize(
   image: HTMLImageElement,
-  offsetH: number,
-  offsetV: number,
   hCells: number,
   vCells: number,
-  srcWidth: number,
-  srcHeight: number,
   targetSize: number,
   noCrop: boolean,
   animated: boolean,
@@ -83,7 +71,6 @@ function renderAllCellsFixedSize(
   if (!animated) {
     const img = renderFrameUncut(
       0, image,
-      offsetH, offsetV, srcWidth, srcHeight,
       targetSize * hCells, targetSize * vCells, noCrop,
       animationInvert, effects, webglEffects,
       framerate, framecount,
@@ -123,7 +110,6 @@ function renderAllCellsFixedSize(
       const keyframe = animationInvert ? 1 - (i / denominator) : i / denominator;
       const frame = renderFrameUncut(
         keyframe, image,
-        offsetH, offsetV, srcWidth, srcHeight,
         targetSize * hCells, targetSize * vCells, noCrop,
         animationInvert, effects, webglEffects,
         framerate, framecount,
@@ -151,12 +137,8 @@ function renderAllCellsFixedSize(
 /* ASYNC: returns a 2d-array of (possibly animated) images. */
 export function renderAllCells(
   image: HTMLImageElement,
-  offsetH: number,
-  offsetV: number,
   hCells: number,
   vCells: number,
-  srcWidth: number,
-  srcHeight: number,
   maxSize: number,
   noCrop: boolean,
   animated: boolean,
@@ -169,7 +151,7 @@ export function renderAllCells(
 ): Promise<Blob[][]> {
   return new Promise((resolve) => {
     renderAllCellsFixedSize(
-      image, offsetH, offsetV, hCells, vCells, srcWidth, srcHeight, maxSize, noCrop,
+      image, hCells, vCells, maxSize, noCrop,
       animated, animationInvert, effects, webglEffects,
       framerate, framecount,
     ).then((ret) => {
@@ -182,7 +164,7 @@ export function renderAllCells(
       )));
       if (shouldRetry) {
         renderAllCells(
-          image, offsetH, offsetV, hCells, vCells, srcWidth, srcHeight, maxSize * 0.9, noCrop,
+          image, hCells, vCells, maxSize * 0.9, noCrop,
           animated, animationInvert, effects, webglEffects,
           framerate, framecount,
           binarySizeLimit,

@@ -5,7 +5,6 @@ import CellcountBlock from "../formblocks/CellcountBlock.vue";
 import Button from "../inputs/Button.vue";
 import Select from "../inputs/Select.vue";
 import Checkbox from "../inputs/Checkbox.vue";
-import Slider from "../inputs/Slider.vue";
 import Fieldset from "../inputs/Fieldset.vue";
 import Space from "../global/Space.vue";
 import Card from "../global/Card.vue";
@@ -30,12 +29,6 @@ type EffectOption = { label: string, value: Effect };
 type WebGLEffectOption = { label: string, value: WebGLEffect };
 type SpeedOption = { label: string, value: number };
 
-const TRIMMING_OPTIONS = [
-  { label: "ぴっちり", value: "" },
-  { label: "はみだす (アス比維持)", value: "cover" },
-  { label: "おさめる (アス比維持)", value: "contain" },
-];
-
 const SPEED_OPTIONS = [
   { label: "コマ送り", value: 2.0 },
   { label: "遅い", value: 1.3 },
@@ -56,7 +49,6 @@ export default defineComponent({
     Fieldset,
     Space,
     Select,
-    Slider,
     DevTool,
   },
   props: {
@@ -70,19 +62,15 @@ export default defineComponent({
     return {
       effects,
       webgleffects,
-      TRIMMING_OPTIONS,
       SPEED_OPTIONS,
       conf: {
         /* basic */
-        trimming: TRIMMING_OPTIONS[0],
         speed: SPEED_OPTIONS[2],
         cells: [1, 1],
         animationInvert: false,
         effects: [] as EffectOption[],
         webglEffects: [] as WebGLEffectOption[],
         /* advanced */
-        trimH: [0, 0],
-        trimV: [0, 0],
         noCrop: false,
         duration: SPEED_OPTIONS[2].value,
       },
@@ -94,7 +82,6 @@ export default defineComponent({
     baseImage: {
       handler(): void {
         if (this.baseImage) {
-          this.refreshDefaultSettings();
           this.render();
         }
       },
@@ -113,30 +100,6 @@ export default defineComponent({
     },
   },
   methods: {
-    refreshDefaultSettings(): void {
-      if (this.baseImage) {
-        const image = this.baseImage;
-        const h = EMOJI_SIZE * this.conf.cells[0];
-        const v = EMOJI_SIZE * this.conf.cells[1];
-        let widthRatio = h / image.naturalWidth;
-        let heightRatio = v / image.naturalHeight;
-        if (this.conf.trimming.value === "cover") {
-          widthRatio = Math.max(widthRatio, heightRatio);
-          heightRatio = widthRatio;
-        } else if (this.conf.trimming.value === "contain") {
-          widthRatio = Math.min(widthRatio, heightRatio);
-          heightRatio = widthRatio;
-        }
-        const offsetH = Math.floor((image.naturalWidth - h / widthRatio) / 2);
-        const offsetV = Math.floor((image.naturalHeight - v / heightRatio) / 2);
-        this.conf.trimH = [offsetH, image.naturalWidth - offsetH];
-        this.conf.trimV = offsetV < 0 ? (
-          [offsetV, image.naturalHeight - offsetV]
-        ) : (
-          [0, image.naturalHeight - offsetV * 2]
-        );
-      }
-    },
     selectSpeed(speed: SpeedOption): void {
       this.conf.duration = speed.value;
     },
@@ -153,10 +116,7 @@ export default defineComponent({
         const maxSize = animated ? ANIMATED_EMOJI_SIZE : EMOJI_SIZE;
         renderAllCells(
           this.baseImage,
-          this.conf.trimH[0], this.conf.trimV[0],
           this.conf.cells[0], this.conf.cells[1],
-          this.conf.trimH[1] - this.conf.trimH[0],
-          this.conf.trimV[1] - this.conf.trimV[0],
           maxSize, this.conf.noCrop,
           animated,
           this.conf.animationInvert,
@@ -196,32 +156,9 @@ export default defineComponent({
       </GridItem>
       <GridItem>
         <Space vertical xlarge full>
-          <Fieldset v-if="!showDetails" label="切り抜き">
-            <Select
-                v-model="conf.trimming"
-                :options="TRIMMING_OPTIONS"
-                @update:model-value="refreshDefaultSettings" />
-          </Fieldset>
           <CellcountBlock
               v-if="showDetails"
-              v-model="conf.cells"
-              @update:model-value="refreshDefaultSettings" />
-          <Fieldset v-if="showDetails" label="トリミング 横">
-            <Slider
-                v-model="conf.trimH"
-                block
-                :marks="[0, baseImage.width]"
-                :min="baseImage ? - Math.floor(baseImage.width * 0.5) : 0"
-                :max="baseImage ? Math.ceil(baseImage.width * 1.5) : 0" />
-          </Fieldset>
-          <Fieldset v-if="showDetails" label="トリミング 縦">
-            <Slider
-                v-model="conf.trimV"
-                block
-                :marks="[0, baseImage.height]"
-                :min="baseImage ? - Math.floor(baseImage.height * 0.5) : 0"
-                :max="baseImage ? Math.ceil(baseImage.height * 1.5) : 0" />
-          </Fieldset>
+              v-model="conf.cells" />
           <Fieldset v-if="!showDetails" label="アニメ速度">
             <Select
                 v-model="conf.speed"
