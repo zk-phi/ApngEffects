@@ -21,7 +21,6 @@ function renderFrameUncut(
   webglEffects: WebGLEffect[],
   framerate: number,
   framecount: number,
-  fillStyle?: string,
 ) {
   let canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d")!;
@@ -56,14 +55,10 @@ function renderFrameUncut(
   }
 
   if (noCrop) {
-    // copy webglCanvas content with background
-    return cropCanvas(canvas, 0, 0, targetWidth * 2, targetHeight * 2, fillStyle);
+    // copy webglCanvas content
+    return cropCanvas(canvas, 0, 0, targetWidth * 2, targetHeight * 2);
   } else {
-    return cropCanvas(
-      canvas,
-      targetWidth / 2, targetHeight / 2, targetWidth, targetHeight,
-      fillStyle,
-    );
+    return cropCanvas(canvas, targetWidth / 2, targetHeight / 2, targetWidth, targetHeight);
   }
 }
 
@@ -91,8 +86,6 @@ function renderAllCellsFixedSize(
   webglEffects: WebGLEffect[],
   framerate: number,
   framecount: number,
-  backgroundColor: string,
-  transparent: boolean,
   cnum = Infinity,
   loop = true,
 ) {
@@ -103,7 +96,6 @@ function renderAllCellsFixedSize(
       targetSize * hCells, targetSize * vCells, noCrop,
       animation, animationInvert, effects, webglEffects,
       framerate, framecount,
-      transparent ? null : backgroundColor,
     );
     const cells = noCrop ? (
       cutoutCanvasIntoCells(img, 0, 0, hCells, vCells, targetSize * 2, targetSize * 2)
@@ -144,7 +136,6 @@ function renderAllCellsFixedSize(
         targetSize * hCells, targetSize * vCells, noCrop,
         animation, animationInvert, effects, webglEffects,
         framerate, framecount,
-        transparent ? null : backgroundColor,
       );
       const imgCells = noCrop ? (
         cutoutCanvasIntoCells(frame, 0, 0, hCells, vCells, targetSize * 2, targetSize * 2)
@@ -184,8 +175,6 @@ export function renderAllCells(
   webglEffects: WebGLEffect[],
   framerate: number,
   framecount: number,
-  backgroundColor: string,
-  transparent: boolean,
   binarySizeLimit: number,
 ): Promise<Blob[][]> {
   return new Promise((resolve) => {
@@ -193,7 +182,6 @@ export function renderAllCells(
       image, offsetH, offsetV, hCells, vCells, srcWidth, srcHeight, maxSize, noCrop,
       animated, animation, animationInvert, effects, webglEffects,
       framerate, framecount,
-      backgroundColor, transparent,
     ).then((ret) => {
       /**
        * If a cell exceeds the limitation, retry with smaller cell size.
@@ -207,7 +195,6 @@ export function renderAllCells(
           image, offsetH, offsetV, hCells, vCells, srcWidth, srcHeight, maxSize * 0.9, noCrop,
           animated, animation, animationInvert, effects, webglEffects,
           framerate, framecount,
-          backgroundColor, transparent,
           binarySizeLimit,
         ).then(resolve);
       } else {

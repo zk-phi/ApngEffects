@@ -22,18 +22,12 @@ export const flipContext = (ctx: CanvasRenderingContext2D, width: number): void 
 export const cropCanvas = (
   source: HTMLCanvasElement,
   left: number, top: number, w: number, h: number,
-  fillStyle?: string,
 ): HTMLCanvasElement => {
   const target = document.createElement("canvas");
   const ctx = target.getContext("2d")!;
 
   target.width = w;
   target.height = h;
-
-  if (fillStyle) {
-    ctx.fillStyle = fillStyle;
-    ctx.fillRect(0, 0, w, h);
-  }
 
   ctx.drawImage(source, left, top, w, h, 0, 0, w, h);
 

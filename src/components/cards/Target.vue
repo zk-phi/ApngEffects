@@ -7,7 +7,6 @@ import Select from "../inputs/Select.vue";
 import Checkbox from "../inputs/Checkbox.vue";
 import Slider from "../inputs/Slider.vue";
 import Fieldset from "../inputs/Fieldset.vue";
-import Color from "../inputs/Color.vue";
 import Space from "../global/Space.vue";
 import Card from "../global/Card.vue";
 import Grid from "../global/Grid.vue";
@@ -51,7 +50,6 @@ const SPEED_OPTIONS = [
 
 export default defineComponent({
   components: {
-    Color,
     EffectBlock,
     Checkbox,
     CellcountBlock,
@@ -96,8 +94,6 @@ export default defineComponent({
         trimV: [0, 0],
         noCrop: false,
         duration: SPEED_OPTIONS[2].value,
-        backgroundColor: "#ffffff",
-        transparent: false,
       },
       showDetails: false,
       devMode: false,
@@ -179,7 +175,7 @@ export default defineComponent({
           this.conf.effects.concat(this.conf.staticEffects).map((eff) => eff.value),
           this.conf.webglEffects.map((eff) => eff.value),
           framerate, framecount,
-          this.conf.backgroundColor, this.conf.transparent, BINARY_SIZE_LIMIT,
+          BINARY_SIZE_LIMIT,
         ).then((res) => {
           this.$emit("render", res);
         });
@@ -254,14 +250,6 @@ export default defineComponent({
                 :min="0.1"
                 :step="0.1"
                 :max="2.0" />
-          </Fieldset>
-          <Fieldset label="背景色">
-            <Space vertical full>
-              <Color v-model="conf.backgroundColor" block />
-              <Checkbox v-model="conf.transparent">
-                {{ "透過 (アニメ gif は非推奨)" }}
-              </Checkbox>
-            </Space>
           </Fieldset>
         </Space>
       </GridItem>
