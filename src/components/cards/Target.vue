@@ -41,6 +41,14 @@ const FPS_OPTIONS = [
   { label: "超なめらか (60fps)", value: 60 },
 ];
 
+const CNUM_OPTIONS = [
+  { label: "超せつやく (64色)", value: 64 },
+  { label: "せつやく (128色)", value: 128 },
+  { label: "ふつう (256色)", value: 256 },
+  { label: "高画質 (512色)", value: 512 },
+  { label: "最高画質 (減色なし)", value: Infinity },
+];
+
 export default defineComponent({
   components: {
     EffectBlock,
@@ -67,6 +75,7 @@ export default defineComponent({
       webgleffects,
       DURATION_OPTIONS,
       FPS_OPTIONS,
+      CNUM_OPTIONS,
       conf: {
         /* basic */
         duration: DURATION_OPTIONS[2],
@@ -75,6 +84,7 @@ export default defineComponent({
         effects: [] as EffectOption[],
         webglEffects: [] as WebGLEffectOption[],
         /* advanced */
+        cnum: CNUM_OPTIONS[2],
         noCrop: false,
       },
       showDetails: false,
@@ -119,7 +129,7 @@ export default defineComponent({
           this.conf.animationInvert,
           this.conf.effects.map((eff) => eff.value),
           this.conf.webglEffects.map((eff) => eff.value),
-          this.conf.fps.value, framecount,
+          this.conf.fps.value, framecount, this.conf.cnum.value,
         ).then((res) => {
           this.$emit("render", res);
         });
@@ -161,6 +171,11 @@ export default defineComponent({
             <Select
                 v-model="conf.fps"
                 :options="FPS_OPTIONS" />
+          </Fieldset>
+          <Fieldset label="クオリティ (色数)">
+            <Select
+                v-model="conf.cnum"
+                :options="CNUM_OPTIONS" />
           </Fieldset>
         </Space>
       </GridItem>
