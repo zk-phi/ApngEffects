@@ -2,10 +2,7 @@ http://zk-phi.github.io/apngtool
 
 ** 開発者向け
 
-新しいアイデアや新しいクソアニメを実装したらぜひ PR ください！
-
-*** 開発環境
-**** dev server
+*** dev server
 
 : npm install
 : npm run start
@@ -14,13 +11,13 @@ http://zk-phi.github.io/apngtool
 
 ソースをいじるとすぐに反映されます。
 
-**** ビルド
+*** ビルド
 
 : npm run build
 
 ビルドすると =./dist= ができます。そのまま静的サイトとしてデプロイできます。
 
-**** lint
+*** lint
 
 : npm run lint
 
@@ -42,205 +39,3 @@ GitHub Actions を使って自動でビルドしたり、 lint をかけたり�
 
 ビルド時、 GitHub Secrets に ~ROLLBAR_TOKEN~ をセットしておくと、エラーを
 rollbar から確認できます。
-
-*** ディレクトリ構成
-
-- ~src/~
-  - ~animations/~ ... 個別のアニメーションの実装が入っています
-  - ~components/~ ... UI 部品が入っています
-  - ~constants/~ ... 定数類が入っています
-  - ~effects/~ ... エフェクトの実装が入っています
-  - ~filters/~ ... フィルタの実装が入っています
-  - ~fonts/~ ... web font が入っています
-  - ~parts/~ ... 「パーツから選ぶ」で使用するパーツ画像が入っています
-  - ~samples/~ ... チュートリアルで使っているサンプルが入っています
-  - ~shaders/~ ... WebGL エフェクトで使うフラグメントシェーダーが入っています
-  - ~utils/~ ... 便利関数たちが入っています
-  - ~webgleffects/~ ... WebGL エフェクトの実装が入っています
-  - ~megamoji.js~ ... エントリポイントです
-  - ~types.js~ ... エフェクトなどの型定義が入っています
-
-- ~static/~ ... html など特にビルドせずにそのまま配信できるものが入っています
-- ~resources/~ ... ドキュメントで使う画像などアプリと関係ないものが雑に入っています
-
-*** フィルタの追加
-
-~src/constants/filters.js~ に一覧があります。
-
-フィルタの実体は１引数の関数です。
-
-~HTMLImageElement~ が渡ってくるので、適宜画像処理をして、できあがった画像を
-BlobURL で返します。
-
-*** エフェクトの追加
-
-~src/constants/effects.js~ に一覧があります。
-
-エフェクトの実体は５引数の関数です：
-
-- ~keyframe~ :: アニメーションの進行具合 (0.0 ~ 1.0 の浮動小数)
-- ~ctx~ :: CanvasRenderingContext2D のオブジェクト
-- ~cellWidth~ :: canvas の横幅
-- ~cellHeight~ :: canvas の高さ
-
-背景が塗りつぶされたあと、 ~drawImage~ される直前の ~ctx~ が渡ってくる
-ので、 ~transform~, ~filter~, ~clip~ など好みの変形をセットしてくださ
-い。 エフェクトは複数併用することを想定しているので、 ~setTransform~
-など他のエフェクトが加えた効果をアンドゥしてしまうようなメソッドを呼ぶ
-ことは避けてください。
-
-渡ってくる ~canvas~ は、最終的に絵文字としてレンダーされるものの４倍
-（縦横それぞれ２倍）の大きさになっていることに注意してください。
-
-#+begin_src text
-  +--------+
-  |        | <- cellHeight / 4 の余白
-  | +----+ |
-  | |    | | <- cellHeight / 2
-  | |    | |    最終的に絵文字に使われる部分
-  | +----+ |
-  |        | <- cellHeight / 4 の余白
-  +--------+
-#+end_src
-
-たとえば絵文字を上にスライドアウトさせたい場合、 ~cellHeight / 2~ だけ
-(~cellHeight~ ではなく) 上に ~translate~ してあげれば十分です
-
-余白をトリミングする前の canvas の様子が見たい場合は、「効果をつける」
-の「詳細オプション＞開発者モード」にある「余白を切らない」を有効に
-してください。
-
-===
-
-仕様の背景：
-
-~びよんびよん~ などの拡大縮小 (特に縮小) や回転を伴うエフェクトを組み
-合わせると、本来絵文字として使われる範囲外の、余白部分までチラ見えして
-しまうことがあります。このような場合でもアニメーションを綺麗に見せるた
-め、内部ではいったん、最終的に絵文字に使われる範囲より外まではみ出して
-レンダリングしてから、あとで余白をカットしています。
-
-わかりづらい仕様なのでなんとかしたい気持ちはありますが、上手い方法が思
-いついていないです。
-
-*** アニメーションの追加
-
-~src/constants/animations.js~ に一覧があります。
-
-アニメーションの実体は５引数の関数です：
-
-- ~keyframe~ :: (~effect_~ と同様)
-- ~ctx~ :: (~effect_~ と同様)
-- ~image~ :: アニメーションさせたい元画像
-- ~offsetH~ :: 元画像の描画したい範囲（左端）
-- ~offsetV~ :: 元画像の描画したい範囲（上端）
-- ~width~ :: 元画像の描画したい範囲 (幅)
-- ~height~ :: 元画像の描画したい範囲 (高さ)
-- ~cellWidth~ :: (~effect_~ と同様)
-- ~cellHeight~ :: (~effect_~ と同様)
-
-アニメーションは、渡ってきた canvas に対して、 ~ctx.drawImage~ などを
-使って実際に画像 ~image~ をレンダリングするします。ユーザーの設定した
-トリミング範囲が ~offsetH, offsetV, width, height~ として渡ってくるので、
-通常、 canvas に対するレンダリングは以下の形になります (効果の一環
-として、あえてそうしないことは可能です)：
-
-#+begin_src javascript
-  ctx.drawImage(image, offsetH, offsetV, width, height, ...);
-#+end_src
-
-アニメーションに渡される canvas もエフェクトと同様、実際に絵文字として
-出力されるものの４倍の大きさを持っています。
-
-#+begin_src text
-  +--------+
-  |        | <- cellHeight / 4 の余白
-  | +----+ |
-  | |    | | <- cellHeight / 2
-  | |    | |    最終的に絵文字に使われる部分
-  | +----+ |
-  |        | <- cellHeight / 4 の余白
-  +--------+
-#+end_src
-
-たとえば、ただ画面の中央に通常のサイズで絵文字を描画したいだけの場合
-(なにもしないアニメーション)、実装は次のようになります：
-
-#+begin_src javascript
-  ctx.drawImage(..., cellWidth / 4, cellHeight / 4, cellWidth / 2, cellHeight / 2);
-#+end_src
-
-エフェクトと比べると、レンダリング方法を自由に実装できる点で自由度が高
-いです (２つ重ねてレンダリングするなど、単純な変形だけでは実現できない
-効果を実装できる)。ただし、他のアニメーションと組み合わせることはでき
-なくなってしまうので、エフェクトとして同じ効果を実装することができない
-か、一度は検討してみてください。
-
-*** WebGL エフェクトの追加
-
-~src/constants/webgleffects.js~ に一覧があります。
-
-Canvas の基本的な変形機能だけでは実装できないエフェクトを WebGL で実装できます。
-
-WebGL エフェクトの実体は４引数の関数です：
-
-- ~keyframe~
-- ~cellWidth~
-- ~cellHeight~
-
-シェーダをロードして、適切なパラメータをセットして返してください。
-
-#+begin_src js
-  // 例
-  import { webglLoadEffectShader, webglSetVec2 } from '../utils/webgl';
-  import fooShader from '../shaders/foo';
-  function webglZoom (keyframe, _w, _h, args) {
-    const program = webglLoadEffectShader(fooShader);
-    webglSetVec2(program, 'center', keyframe, 0.5);
-    return program;
-  }
-#+end_src
-
-シェーダーは ~src/shaders~ にあります (追加しても OK です)。
-
-追加する場合は ~webglEffectShader~ というラッパー関数があるので、これに
-生の GLSL コードを投げつけてください。
-
-#+begin_src js
-  const myShader = webglEffectShader(`
-    <GLSL code>
-  `);
-#+end_src
-
-よく使う関数 (疑似乱数など) は ~src/shaders/utils~ にあります。
-
-画像は例によって４倍サイズでレンダーされます。
-
-*** フォントの追加
-
-読み込みが遅くなるので慎重に。
-
-以下のフォントは入れないことにしています：
-
-- アイコンサイズに縮小すると読めない
-- 収録漢字が少ない
-- 他のフォントと使いたい場面が被る
-
-フォントのライセンスをよく確認 (再配布可？改変 (woff 化) 可？) した上で、
-woff 化したフォントを ~src/fonts~ に入れてください。
-
-SIL Open Font License でライセンスされたフォントのうち、ライセンスに
-「with Reserved Font Name ...」が含まれているものは原則使用しません
-(woff 化にあたってフォント名を変える必要があり、面倒なため)。
-
-woff 化にはこれ https://github.com/zk-phi/woff2sfnt-sfnt2woff を使っています。
-
-: node sfnt2woff.js hoge.ttf hoge.woff
-
-フォントを入れたら２つのファイルを更新してください。
-
-- ~src/constants/fonts.ts~
-- ~LICENSE.markdown~
-
-ライセンス表記時の作者名は、アカウント名などから適当に持ってくるのではなく、
-なるべく正式な表記を探してコピーしてください。

@@ -1,28 +1,22 @@
-このツールで作った絵文字について、ツール作者がなにか権利を主張することはありません。
+このツールで作った APNG 画像について、ツールの作者が権利を主張することは原則ありません。
 
-(画像から絵文字を作る場合、使う素材の権利は守ってください)
+(よそから持ってきた画像素材をこのツールで動かす場合、元の画像素材のライセンスには十分注意してください)
 
-「キメラ絵文字」はパーツが CC-BY ライセンスで提供されているので、再配布等には権利表示が必要になります。
+作った画像を頒布・販売したり、有料配信で利用することもできます。その際は、このツールで作ったことを明記していただけると嬉しいです。
 
 # このツール自体のライセンス
 
-このソフトウェアは以下のライセンスのもと自由に改変、再配布できます。
-
-- 「キメラ絵文字」の素材 (./src/parts) ... CC-BY
-- フォント (./src/fonts) ... フォントごとのライセンス (下記参照)
-- それ以外 ... MIT License
+このソフトウェアは MIT License のもと自由に改変、再配布できます。
 
 # 権利表示
 
 バンドルに含まれるライブラリ
-- gif.js
-  - (c) Johan Nordberg, Licensed under the MIT License
+- UPNG.js
+  - (c) Photopea, Licensed under the MIT License
 - color-convert
   - (c) Josh Junon, Licensed under the MIT License
 - file-saver
   - (c) Eli Grey, Licensed under the MIT License
-- jszip
-  - (c) Stuart Knightley, David Duponchel, Franz Buchinger, António Afonso, Licensed under the MIT License
 - Rollbar
   - (c) Rollbar, Licensed under the MIT License
 - Vue.js
@@ -33,35 +27,5 @@
 いくつかのエフェクトは glfx.js ((c) Evan Wallace, MIT License) から引用しています。
 
 画像素材
-- Twemoji ("キメラ絵文字" 機能のために改変)
-  - (c) Twitter, Licensed under the CC-BY License
 - Material Design Icons
   - (c) Google, Licensed under the Apache License
-
-フォント
-- Mplus 1
-  - (c) The M+ FONTS Project Authors, Licensed under the SIL OFL (without RFN)
-- Rounded M+ 1c
-  - (c) 自家製フォント工房, Licensed under the M+ Fonts License
-- Noto Serif
-  - (c) Google, Licensed under the SIL OFL (without RFN)
-- デラゴシック
-  - (c) The Dela Gothic Project Authors, Licensed under the SIL OFL (without RFN)
-- あかずきんポップ
-  - (c) Kato Masashi, Licensed under the M+ Fonts License
-- 零ゴシック
-  - (c) フロップデザイン, Licensed under the SIL OFL (without RFN)
-- 黒薔薇シンデレラ
-  - (c) MODI工場, Licensed under the M+ Fonts License
-- はちまるポップ
-  - (c) The Hachi Maru Pop Project Authors, Licensed under the SIL OFL (without RFN)
-- 青柳隷書しも
-  - (c) 武蔵システム, 独自ライセンス (下記参照)
-  - [フォントの使用方法](https://github.com/zk-phi/MEGAMOJI/blob/master/resources/SIMO/readme.txt)
-  - [フォントの解説](https://github.com/zk-phi/MEGAMOJI/blob/master/resources/SIMO/description.pdf)
-- PixelMplus
-  - (c) Itou Hiroki, Licensed under the M+ Fonts License
-- レゲエ
-  - (c) The Reggae Project Authors, Licensed under the SIL OFL (without RFN)
-- ランパート
-  - (c) The Rampart Project Authors, Licensed under the SIL OFL (without RFN)
