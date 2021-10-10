@@ -73,32 +73,6 @@ export const shrinkCanvas = (source: HTMLCanvasElement): HTMLCanvasElement => {
   return cropCanvas(source, left, top, (right - left + 1) || 1, (bottom - top + 1) || 1);
 };
 
-/* Merge images into one image and return as a BlobURL. */
-export const mergeImages = (
-  w: number, h: number, srcs: string[], callback: (bloburl: string) => void,
-): void => {
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d")!;
-
-  canvas.width = w;
-  canvas.height = h;
-
-  let ix = 0;
-  const img = document.createElement("img");
-
-  img.onload = () => {
-    ctx.drawImage(img, 0, 0, w, h);
-    ix += 1;
-    if (ix === srcs.length) {
-      callback(canvas.toDataURL());
-    } else {
-      img.src = srcs[ix];
-    }
-  };
-
-  img.src = srcs[0];
-};
-
 /* Load a local image via specified path and call-back with the BlobURL of the loaded image. */
 export const loadFileAsBlobURL = (path: File): Promise<string> => (
   new Promise((resolve) => {
