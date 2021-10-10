@@ -51,9 +51,8 @@ let encoders: APNGEncoder[][] | null = null;
 /**
  * ASYNC:
  * returns a 2d-array of (possibly animated) images of specified size (tragetSize).
- * each images may exceed binarySizeLimit.
  */
-function renderAllCellsFixedSize(
+export function renderAllCells(
   image: HTMLImageElement,
   hCells: number,
   vCells: number,
@@ -132,46 +131,4 @@ function renderAllCellsFixedSize(
       })
     )))));
   }
-}
-
-/* ASYNC: returns a 2d-array of (possibly animated) images. */
-export function renderAllCells(
-  image: HTMLImageElement,
-  hCells: number,
-  vCells: number,
-  maxSize: number,
-  noCrop: boolean,
-  animated: boolean,
-  animationInvert: boolean,
-  effects: Effect[],
-  webglEffects: WebGLEffect[],
-  framerate: number,
-  framecount: number,
-  binarySizeLimit: number,
-): Promise<Blob[][]> {
-  return new Promise((resolve) => {
-    renderAllCellsFixedSize(
-      image, hCells, vCells, maxSize, noCrop,
-      animated, animationInvert, effects, webglEffects,
-      framerate, framecount,
-    ).then((ret) => {
-      /**
-       * If a cell exceeds the limitation, retry with smaller cell size.
-       * This does not happen in most cases.
-       */
-      const shouldRetry = ret.some((row) => row.some((cell: Blob) => (
-        cell.size >= binarySizeLimit
-      )));
-      if (shouldRetry) {
-        renderAllCells(
-          image, hCells, vCells, maxSize * 0.9, noCrop,
-          animated, animationInvert, effects, webglEffects,
-          framerate, framecount,
-          binarySizeLimit,
-        ).then(resolve);
-      } else {
-        resolve(ret);
-      }
-    });
-  });
 }

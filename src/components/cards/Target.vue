@@ -20,7 +20,6 @@ import { renderAllCells } from "../../utils/emoji";
 import {
   EMOJI_SIZE,
   ANIMATED_EMOJI_SIZE,
-  BINARY_SIZE_LIMIT,
   FRAMERATE_MAX,
   FRAMECOUNT_MAX,
 } from "../../constants/emoji";
@@ -123,7 +122,6 @@ export default defineComponent({
           this.conf.effects.map((eff) => eff.value),
           this.conf.webglEffects.map((eff) => eff.value),
           framerate, framecount,
-          BINARY_SIZE_LIMIT,
         ).then((res) => {
           this.$emit("render", res);
         });
