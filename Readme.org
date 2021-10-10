@@ -1,4 +1,4 @@
-http://zk-phi.github.io/MEGAMOJI
+http://zk-phi.github.io/apngtool
 
 ** 開発者向け
 

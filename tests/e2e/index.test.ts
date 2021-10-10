@@ -4,6 +4,6 @@ describe("Load index page", () => {
   });
   it("Succeed to render the page", async () => {
     const text = await page.evaluate(() => document.body.textContent);
-    await expect(text).toContain("MEGAMOJI");
+    await expect(text).toContain("ApngEffects");
   });
 });
