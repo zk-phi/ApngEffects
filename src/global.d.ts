@@ -19,6 +19,17 @@ declare module "@dhdbstjr98/gif.js" {
   }
 }
 
+declare module "upng-js" {
+  export function encode(
+    imgs: ArrayBuffer[],
+    w: number,
+    h: number,
+    cnum: number,
+    dels: number[],
+    opts: { loop?: number },
+  ): ArrayBuffer;
+}
+
 declare module "*.woff" {
   export default string;
 }
