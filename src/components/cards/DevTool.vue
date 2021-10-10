@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent } from "vue";
-import { Animation, Effect, WebGLEffect } from "../../types";
+import { Effect, WebGLEffect } from "../../types";
 import {
   webglEffectShader,
   webglLoadEffectShader,
@@ -15,11 +15,6 @@ import TabGroup from "../inputs/TabGroup.vue";
 import TabButton from "../inputs/TabButton.vue";
 import Card from "../global/Card.vue";
 import Space from "../global/Space.vue";
-
-const sampleAnimation = `ctx.drawImage(
-  image, offsetH, offsetV, width, height,
-  cellWidth / 4, cellHeight / 4, cellWidth / 2, cellHeight / 2,
-);`;
 
 const sampleEffect = "ctx.translate(0, 0);";
 
@@ -43,44 +38,21 @@ export default defineComponent({
     noCrop: { type: Boolean, required: true },
   },
   emits: [
-    "update:noCrop", "buildAnimation", "buildEffect", "buildShader", "close",
+    "update:noCrop", "buildEffect", "buildShader", "close",
   ],
   data: () => ({
-    tab: "animation",
+    tab: "effect",
     source: {
-      animation: sampleAnimation,
       effect: sampleEffect,
       webgl: sampleShader,
     },
   }),
   methods: {
     build(): void {
-      if (this.tab === "animation") {
-        this.buildAnimation();
-      } else if (this.tab === "effect") {
+      if (this.tab === "effect") {
         this.buildEffect();
       } else {
         this.buildShader();
-      }
-    },
-    /* eslint-disable no-console, no-new-func */
-    buildAnimation(): void {
-      try {
-        const animationImpl = new Function(
-          "keyframe", "ctx", "image",
-          "offsetH", "offsetV", "width", "height", "cellWidth", "cellHeight",
-          this.source.animation,
-        );
-        const animation: Animation = (...args) => {
-          try {
-            animationImpl(...args);
-          } catch (error) {
-            console.log(error);
-          }
-        };
-        this.$emit("buildAnimation", { label: "カスタム", value: animation });
-      } catch (error) {
-        console.log(error);
       }
     },
     buildEffect(): void {
@@ -123,9 +95,6 @@ export default defineComponent({
   <Card v-if="show">
     <Space vertical xlarge full>
       <TabGroup>
-        <TabButton v-model="tab" value="animation">
-          アニメーション (js)
-        </TabButton>
         <TabButton v-model="tab" value="effect">
           エフェクト (js)
         </TabButton>
@@ -137,9 +106,6 @@ export default defineComponent({
         <Space vertical full>
           <p class="description">
             コンパイルエラーはコンソールを見てください。
-          </p>
-          <p v-if="tab === 'animation'" class="description">
-            args: keyframe, ctx, image, offsetH, offsetV, width, height, cellWidth, cellHeight
           </p>
           <p v-if="tab === 'effect'" class="description">
             args: keyframe, ctx, cellWidth, cellHeight

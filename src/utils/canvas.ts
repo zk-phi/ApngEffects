@@ -13,11 +13,6 @@ export const scaleCentered = (
   );
 };
 
-export const flipContext = (ctx: CanvasRenderingContext2D, width: number): void => {
-  ctx.translate(width, 0);
-  ctx.scale(-1, 1);
-};
-
 /* Create a new canvas and render specified region of the source canvas. */
 export const cropCanvas = (
   source: HTMLCanvasElement,

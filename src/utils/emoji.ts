@@ -1,5 +1,5 @@
 import APNGEncoder from "./encoder";
-import { Animation, Effect, WebGLEffect } from "../types";
+import { Effect, WebGLEffect } from "../types";
 import { webglApplyEffects, webglInitialize } from "./webgl";
 import { cropCanvas, cutoutCanvasIntoCells } from "./canvas";
 
@@ -15,7 +15,6 @@ function renderFrameUncut(
   targetWidth: number,
   targetHeight: number,
   noCrop: boolean,
-  animation: Animation | null,
   animationInvert: boolean,
   effects: Effect[],
   webglEffects: WebGLEffect[],
@@ -33,22 +32,15 @@ function renderFrameUncut(
     effect(keyframe, ctx, targetWidth * 2, targetHeight * 2);
   });
 
-  if (animation) {
-    animation(
-      keyframe,
-      ctx, image, offsetH, offsetV, width, height, targetWidth * 2, targetHeight * 2,
-    );
-  } else {
-    const left = offsetH - width / 2;
-    const top = offsetV - height / 2;
-    const targetLeft = left >= 0 ? 0 : -left * targetWidth / width;
-    const targetTop = top >= 0 ? 0 : -top * targetHeight / height;
-    ctx.drawImage(
-      image,
-      Math.max(0, left), Math.max(0, top), width * 2, height * 2,
-      targetLeft, targetTop, targetWidth * 2, targetHeight * 2,
-    );
-  }
+  const left = offsetH - width / 2;
+  const top = offsetV - height / 2;
+  const targetLeft = left >= 0 ? 0 : -left * targetWidth / width;
+  const targetTop = top >= 0 ? 0 : -top * targetHeight / height;
+  ctx.drawImage(
+    image,
+    Math.max(0, left), Math.max(0, top), width * 2, height * 2,
+    targetLeft, targetTop, targetWidth * 2, targetHeight * 2,
+  );
 
   if (webglEffects.length && webglEnabled) {
     canvas = webglApplyEffects(canvas, keyframe, webglEffects);
@@ -80,7 +72,6 @@ function renderAllCellsFixedSize(
   targetSize: number,
   noCrop: boolean,
   animated: boolean,
-  animation: Animation | null,
   animationInvert: boolean,
   effects: Effect[],
   webglEffects: WebGLEffect[],
@@ -94,7 +85,7 @@ function renderAllCellsFixedSize(
       0, image,
       offsetH, offsetV, srcWidth, srcHeight,
       targetSize * hCells, targetSize * vCells, noCrop,
-      animation, animationInvert, effects, webglEffects,
+      animationInvert, effects, webglEffects,
       framerate, framecount,
     );
     const cells = noCrop ? (
@@ -134,7 +125,7 @@ function renderAllCellsFixedSize(
         keyframe, image,
         offsetH, offsetV, srcWidth, srcHeight,
         targetSize * hCells, targetSize * vCells, noCrop,
-        animation, animationInvert, effects, webglEffects,
+        animationInvert, effects, webglEffects,
         framerate, framecount,
       );
       const imgCells = noCrop ? (
@@ -169,7 +160,6 @@ export function renderAllCells(
   maxSize: number,
   noCrop: boolean,
   animated: boolean,
-  animation: Animation | null,
   animationInvert: boolean,
   effects: Effect[],
   webglEffects: WebGLEffect[],
@@ -180,7 +170,7 @@ export function renderAllCells(
   return new Promise((resolve) => {
     renderAllCellsFixedSize(
       image, offsetH, offsetV, hCells, vCells, srcWidth, srcHeight, maxSize, noCrop,
-      animated, animation, animationInvert, effects, webglEffects,
+      animated, animationInvert, effects, webglEffects,
       framerate, framecount,
     ).then((ret) => {
       /**
@@ -193,7 +183,7 @@ export function renderAllCells(
       if (shouldRetry) {
         renderAllCells(
           image, offsetH, offsetV, hCells, vCells, srcWidth, srcHeight, maxSize * 0.9, noCrop,
-          animated, animation, animationInvert, effects, webglEffects,
+          animated, animationInvert, effects, webglEffects,
           framerate, framecount,
           binarySizeLimit,
         ).then(resolve);

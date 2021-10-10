@@ -13,8 +13,7 @@ import Grid from "../global/Grid.vue";
 import GridItem from "../global/GridItem.vue";
 import DevTool from "./DevTool.vue";
 
-import { Animation, Effect, WebGLEffect } from "../../types";
-import animations from "../../constants/animations";
+import { Effect, WebGLEffect } from "../../types";
 import effects from "../../constants/effects";
 import bgeffects from "../../constants/bgeffects";
 import staticeffects from "../../constants/staticeffects";
@@ -29,7 +28,6 @@ import {
   FRAMECOUNT_MAX,
 } from "../../constants/emoji";
 
-type AnimationOption = { label: string, value: Animation };
 type EffectOption = { label: string, value: Effect };
 type WebGLEffectOption = { label: string, value: WebGLEffect };
 type SpeedOption = { label: string, value: number };
@@ -72,7 +70,6 @@ export default defineComponent({
   ],
   data() {
     return {
-      animations,
       effects,
       bgeffects,
       staticeffects,
@@ -84,7 +81,6 @@ export default defineComponent({
         trimming: TRIMMING_OPTIONS[0],
         speed: SPEED_OPTIONS[2],
         cells: [1, 1],
-        animation: null as (AnimationOption | null),
         animationInvert: false,
         staticEffects: [] as EffectOption[],
         effects: [] as EffectOption[],
@@ -116,7 +112,6 @@ export default defineComponent({
     },
     devMode: {
       handler(): void {
-        this.conf.animation = null;
         this.conf.effects = [];
         this.conf.webglEffects = [];
       },
@@ -153,8 +148,7 @@ export default defineComponent({
     render(): void {
       if (this.baseImage) {
         const animated = !!(
-          this.conf.animation
-          || this.conf.effects.length
+          this.conf.effects.length
           || this.conf.webglEffects.length
         );
 
@@ -170,7 +164,6 @@ export default defineComponent({
           this.conf.trimV[1] - this.conf.trimV[0],
           maxSize, this.conf.noCrop,
           animated,
-          this.conf.animation ? this.conf.animation.value : null,
           this.conf.animationInvert,
           this.conf.effects.concat(this.conf.staticEffects).map((eff) => eff.value),
           this.conf.webglEffects.map((eff) => eff.value),
@@ -192,7 +185,6 @@ export default defineComponent({
         <Space vertical xlarge full>
           <Fieldset label="アニメーション">
             <Space vertical full>
-              <Select v-model="conf.animation" nullable :options="animations" />
               <Checkbox v-model="conf.animationInvert">
                 {{ "逆再生" }}
               </Checkbox>
@@ -266,7 +258,6 @@ export default defineComponent({
       v-model:no-crop="conf.noCrop"
       :show="show && devMode"
       @close="devMode = false"
-      @build-animation="conf.animation = $event"
       @build-effect="conf.effects = [$event]"
       @build-shader="conf.webglEffects = [$event]" />
 </template>
