@@ -1,5 +1,4 @@
 import Space from "./Space.vue";
-import ColorSample from "./ColorSample.vue";
 
 export default {
   title: "utils/Space",
@@ -12,19 +11,19 @@ const Template = (args) => ({
   template: `
     <Space vertical :small="small" :large="large">
       <Space :small="small" :large="large">
-        <ColorSample color="#f00" />
-        <ColorSample color="#0f0" />
-        <ColorSample color="#00f" />
+        <span>あ</span>
+        <span>あ</span>
+        <span>あ</span>
       </Space>
       <Space :small="small" :large="large">
-        <ColorSample color="#f00" />
-        <ColorSample color="#0f0" />
-        <ColorSample color="#00f" />
+        <span>あ</span>
+        <span>あ</span>
+        <span>あ</span>
       </Space>
       <Space :small="small" :large="large">
-        <ColorSample color="#f00" />
-        <ColorSample color="#0f0" />
-        <ColorSample color="#00f" />
+        <span>あ</span>
+        <span>あ</span>
+        <span>あ</span>
       </Space>
     </Space>
   `,

@@ -29,50 +29,6 @@ export const cropCanvas = (
   return target;
 };
 
-/* drop transparent area from canvas and returns a new cropped canvas */
-export const shrinkCanvas = (source: HTMLCanvasElement): HTMLCanvasElement => {
-  const ctx = source.getContext("2d")!;
-  const { data } = ctx.getImageData(0, 0, source.width, source.height);
-
-  let top = 0;
-  topLoop: for (; top < source.height; top += 1) {
-    for (let x = 0; x < source.width; x += 1) {
-      if (data[(top * source.width + x) * 4 + 3]) {
-        break topLoop;
-      }
-    }
-  }
-
-  let bottom = source.height - 1;
-  bottomLoop: for (; bottom >= top; bottom -= 1) {
-    for (let x = 0; x < source.width; x += 1) {
-      if (data[(bottom * source.width + x) * 4 + 3]) {
-        break bottomLoop;
-      }
-    }
-  }
-
-  let left = 0;
-  leftLoop: for (; left < source.width; left += 1) {
-    for (let y = top + 1; y < bottom; y += 1) {
-      if (data[(y * source.width + left) * 4 + 3]) {
-        break leftLoop;
-      }
-    }
-  }
-
-  let right = source.width - 1;
-  rightLoop: for (; right >= left; right -= 1) {
-    for (let y = top + 1; y < bottom; y += 1) {
-      if (data[(y * source.width + right) * 4 + 3]) {
-        break rightLoop;
-      }
-    }
-  }
-
-  return cropCanvas(source, left, top, (right - left + 1) || 1, (bottom - top + 1) || 1);
-};
-
 /* Load a local image via specified path and call-back with the BlobURL of the loaded image. */
 export const loadFileAsBlobURL = (path: File): Promise<string> => (
   new Promise((resolve) => {
