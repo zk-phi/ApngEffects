@@ -19,20 +19,26 @@ import { renderAllCells } from "../../utils/emoji";
 import {
   EMOJI_SIZE,
   ANIMATED_EMOJI_SIZE,
-  FRAMERATE_MAX,
-  FRAMECOUNT_MAX,
 } from "../../constants/emoji";
 
 type EffectOption = { label: string, value: Effect };
 type WebGLEffectOption = { label: string, value: WebGLEffect };
 type SpeedOption = { label: string, value: number };
 
-const SPEED_OPTIONS = [
-  { label: "コマ送り", value: 2.0 },
-  { label: "遅い", value: 1.3 },
-  { label: "ふつう", value: 0.8 },
-  { label: "速い", value: 0.3 },
-  { label: "爆速", value: 0.1 },
+const DURATION_OPTIONS = [
+  { label: "超ゆっくり (4sec)", value: 4 },
+  { label: "ゆっくり (2sec)", value: 2 },
+  { label: "ふつう (1sec)", value: 1 },
+  { label: "さくさく (0.5sec)", value: 0.5 },
+  { label: "一瞬 (0.25sec)", value: 0.25 },
+];
+
+const FPS_OPTIONS = [
+  { label: "超せつやく (5fps)", value: 5 },
+  { label: "せつやく (10fps)", value: 10 },
+  { label: "ふつう (15fps)", value: 15 },
+  { label: "なめらか (30fps)", value: 30 },
+  { label: "超なめらか (60fps)", value: 60 },
 ];
 
 export default defineComponent({
@@ -59,16 +65,17 @@ export default defineComponent({
     return {
       effects,
       webgleffects,
-      SPEED_OPTIONS,
+      DURATION_OPTIONS,
+      FPS_OPTIONS,
       conf: {
         /* basic */
-        speed: SPEED_OPTIONS[2],
+        duration: DURATION_OPTIONS[2],
+        fps: FPS_OPTIONS[2],
         animationInvert: false,
         effects: [] as EffectOption[],
         webglEffects: [] as WebGLEffectOption[],
         /* advanced */
         noCrop: false,
-        duration: SPEED_OPTIONS[2].value,
       },
       showDetails: false,
       devMode: false,
@@ -96,9 +103,6 @@ export default defineComponent({
     },
   },
   methods: {
-    selectSpeed(speed: SpeedOption): void {
-      this.conf.duration = speed.value;
-    },
     render(): void {
       if (this.baseImage) {
         const animated = !!(
@@ -106,9 +110,7 @@ export default defineComponent({
           || this.conf.webglEffects.length
         );
 
-        const framerate = Math.min(FRAMERATE_MAX, Math.ceil(FRAMECOUNT_MAX / this.conf.duration));
-        const framecount = Math.floor(this.conf.duration * framerate);
-
+        const framecount = Math.floor(this.conf.duration.value * this.conf.fps.value);
         const maxSize = animated ? ANIMATED_EMOJI_SIZE : EMOJI_SIZE;
         renderAllCells(
           this.baseImage,
@@ -117,7 +119,7 @@ export default defineComponent({
           this.conf.animationInvert,
           this.conf.effects.map((eff) => eff.value),
           this.conf.webglEffects.map((eff) => eff.value),
-          framerate, framecount,
+          this.conf.fps.value, framecount,
         ).then((res) => {
           this.$emit("render", res);
         });
@@ -150,19 +152,15 @@ export default defineComponent({
       </GridItem>
       <GridItem>
         <Space vertical xlarge full>
-          <Fieldset v-if="!showDetails" label="アニメ速度">
+          <Fieldset label="アニメ長さ">
             <Select
-                v-model="conf.speed"
-                :options="SPEED_OPTIONS"
-                @update:model-value="selectSpeed($event)" />
-          </Fieldset>
-          <Fieldset v-if="showDetails" label="アニメ長さ">
-            <Slider
                 v-model="conf.duration"
-                block
-                :min="0.1"
-                :step="0.1"
-                :max="2.0" />
+                :options="DURATION_OPTIONS" />
+          </Fieldset>
+          <Fieldset label="クオリティ (アニメ)">
+            <Select
+                v-model="conf.fps"
+                :options="FPS_OPTIONS" />
           </Fieldset>
         </Space>
       </GridItem>
