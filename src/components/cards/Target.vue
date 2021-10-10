@@ -83,6 +83,7 @@ export default defineComponent({
         duration: DURATION_OPTIONS[2],
         fps: FPS_OPTIONS[2],
         animationInvert: false,
+        animationLoop: true,
         effects: [] as EffectOption[],
         webglEffects: [] as WebGLEffectOption[],
         /* advanced */
@@ -132,7 +133,7 @@ export default defineComponent({
           this.conf.animationInvert,
           this.conf.effects.map((eff) => eff.value),
           this.conf.webglEffects.map((eff) => eff.value),
-          this.conf.fps.value, framecount, this.conf.cnum.value,
+          this.conf.fps.value, framecount, this.conf.cnum.value, this.conf.animationLoop,
         ).then((res) => {
           this.$emit("render", res);
         });
@@ -149,9 +150,14 @@ export default defineComponent({
         <Space vertical xlarge full>
           <Fieldset label="アニメーション">
             <Space vertical full>
-              <Checkbox v-model="conf.animationInvert">
-                {{ "逆再生" }}
-              </Checkbox>
+              <Space>
+                <Checkbox v-model="conf.animationLoop">
+                  {{ "ループ再生" }}
+                </Checkbox>
+                <Checkbox v-model="conf.animationInvert">
+                  {{ "逆再生" }}
+                </Checkbox>
+              </Space>
             </Space>
           </Fieldset>
           <EffectBlock v-model="conf.webglEffects" :effects="webgleffects" />
