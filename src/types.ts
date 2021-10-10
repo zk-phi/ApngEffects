@@ -1,10 +1,5 @@
 type DataURL = string;
 
-// A filter takes an image, and returns filtered image as an DataURL.
-export type Filter = (
-  image: HTMLImageElement,
-) => DataURL;
-
 // Effects are called with CanvasRenderingContext2D before rendering, and
 // expected to configure the canvas. Note that users may enable multiple
 // effects at the same time.
