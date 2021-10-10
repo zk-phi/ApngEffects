@@ -30,7 +30,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <Card :style="transparentBg" title="絵文字">
+  <Card :style="transparentBg" title="プレビュー">
     <img v-if="image" class="result" :src="src" />
   </Card>
 </template>

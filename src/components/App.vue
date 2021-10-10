@@ -11,8 +11,6 @@ import Button from "./inputs/Button.vue";
 import Space from "./global/Space.vue";
 import Grid from "./global/Grid.vue";
 import GridItem from "./global/GridItem.vue";
-import Effect from "./icons/Effect.vue";
-import Back from "./icons/Back.vue";
 import Save from "./icons/Save.vue";
 import Image from "./icons/Image.vue";
 import { extension } from "../utils/file";
@@ -39,19 +37,11 @@ export default defineComponent({
       subImage: null as (HTMLCanvasElement | null),
       resultImage: null as Blob | null,
       previewMode: false,
-      /* ui */
-      ui: {
-        showTargetPanel: false,
-        showTargetDetails: false,
-      },
       width: 640,
       height: 480,
     };
   },
   methods: {
-    onSetShowTarget(value: boolean): void {
-      this.ui.showTargetPanel = value;
-    },
     onRenderTarget(img: Blob): void {
       this.resultImage = img;
     },
@@ -74,7 +64,7 @@ export default defineComponent({
   <div class="app">
     <Space vertical xlarge full>
       <Header />
-      <Grid :columns="[[760, 1], [Infinity, 3]]">
+      <Grid :columns="[[Infinity, 3]]">
         <GridItem :span="2">
           <Space vertical xlarge full>
             <Grid :columns="[[Infinity, 2]]">
@@ -94,35 +84,24 @@ export default defineComponent({
                     @render="onRenderSubImage" />
               </GridItem>
             </Grid>
+            <Target
+                :show="true"
+                :base-image="baseImage"
+                :sub-image="subImage"
+                :width="width"
+                :height="height"
+                @render="onRenderTarget" />
           </Space>
-          <Target
-              :show="ui.showTargetPanel"
-              :base-image="baseImage"
-              :sub-image="subImage"
-              :width="width"
-              :height="height"
-              @render="onRenderTarget" />
         </GridItem>
         <GridItem>
           <Space vertical>
             <Result :image="resultImage" />
-            <Space>
-              <Button @click="onSetShowTarget(!ui.showTargetPanel)">
-                <span v-if="ui.showTargetPanel">
-                  <Back /> もどる
-                </span>
-                <span v-else>
-                  <Effect /> 効果をつける
-                </span>
-              </Button>
-              <Button v-if="baseImage" type="primary" @click="onDownload">
-                <Save /> 絵文字を保存
-              </Button>
-            </Space>
+            <Button v-if="baseImage" type="primary" @click="onDownload">
+              <Save /> APNG を保存
+            </Button>
           </Space>
         </GridItem>
       </Grid>
-
       <Footer />
     </Space>
   </div>

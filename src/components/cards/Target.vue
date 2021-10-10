@@ -85,12 +85,11 @@ export default defineComponent({
         animationLoop: true,
         effects: [] as EffectOption[],
         webglEffects: [] as WebGLEffectOption[],
-        /* advanced */
         easing: easings[0],
         cnum: CNUM_OPTIONS[2],
+        /* dev options */
         noCrop: false,
       },
-      showDetails: false,
       devMode: false,
     };
   },
@@ -147,10 +146,10 @@ export default defineComponent({
 
 <template>
   <Card v-if="show && !devMode">
-    <Grid :columns="[[450, 1], [Infinity, 2]]">
+    <Grid :columns="[[Infinity, 3]]">
       <GridItem>
         <Space vertical xlarge full>
-          <Fieldset label="アニメーション">
+          <Fieldset label="再生設定">
             <Space vertical full>
               <Space>
                 <Checkbox v-model="conf.animationLoop">
@@ -162,17 +161,6 @@ export default defineComponent({
               </Space>
             </Space>
           </Fieldset>
-          <EffectBlock v-model="conf.webglEffects" :effects="webgleffects" />
-          <EffectBlock v-model="conf.effects" :effects="effects" />
-          <Fieldset v-if="showDetails" label="開発者向け">
-            <Button danger type="text" @click="devMode = true">
-              開発者モード
-            </Button>
-          </Fieldset>
-        </Space>
-      </GridItem>
-      <GridItem>
-        <Space vertical xlarge full>
           <Fieldset label="タイミング">
             <Select v-model="conf.easing" :options="easings" />
           </Fieldset>
@@ -193,14 +181,18 @@ export default defineComponent({
           </Fieldset>
         </Space>
       </GridItem>
+      <GridItem :span="2">
+        <Space vertical xlarge full>
+          <EffectBlock v-model="conf.webglEffects" :effects="webgleffects" />
+          <EffectBlock v-model="conf.effects" :effects="effects" />
+          <Fieldset label="開発者向け">
+            <Button danger type="text" @click="devMode = true">
+              エフェクトエディタ
+            </Button>
+          </Fieldset>
+        </Space>
+      </GridItem>
     </Grid>
-    <template #footer>
-      <div style="text-align: center;">
-        <Button type="text" @click="showDetails = !showDetails">
-          {{ showDetails ? '- 詳細を閉じる' : '+ 詳細オプション' }}
-        </Button>
-      </div>
-    </template>
   </Card>
   <DevTool
       v-model:no-crop="conf.noCrop"
