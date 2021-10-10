@@ -114,15 +114,6 @@ export default defineComponent({
     },
     conf: {
       handler(): void {
-        if (window.ga) {
-          const animationName = this.conf.animation ? this.conf.animation.label : "";
-          const effectNames = [
-            this.conf.staticEffects.map((e) => e.label).join(","),
-            this.conf.effects.map((e) => e.label).join(","),
-            this.conf.webglEffects.map((e) => e.label).join(","),
-          ].join("/");
-          window.ga("set", "dimension2", `${animationName}/${effectNames}`);
-        }
         this.render();
       },
       deep: true,
@@ -134,11 +125,6 @@ export default defineComponent({
         this.conf.webglEffects = [];
       },
     },
-  },
-  mounted() {
-    if (window.ga) {
-      window.ga("set", "dimension2", "///");
-    }
   },
   methods: {
     refreshDefaultSettings(): void {

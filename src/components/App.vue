@@ -68,22 +68,13 @@ export default defineComponent({
   methods: {
     onSetShowTarget(value: boolean): void {
       this.ui.showTargetPanel = value;
-      if (window.ga) {
-        window.ga("send", "pageview", value ? "/target" : (`/${this.ui.mode}`));
-      }
     },
     onSelectMode(value: string): void {
       this.ui.mode = value;
       this.ui.showTargetPanel = false;
-      if (window.ga) {
-        window.ga("send", "pageview", `/${value}`);
-      }
     },
     onRenderTarget(imgs: Blob[][]): void {
       this.resultImages = imgs;
-      if (window.ga) {
-        window.ga("send", "event", this.ui.mode, "render");
-      }
     },
     onRender(img: HTMLImageElement): void {
       this.baseImage = img;
@@ -91,9 +82,6 @@ export default defineComponent({
     onDownload(): void {
       const download = prepareDownloadFile(this.resultImages);
       download.then((res) => saveAs(res, `megamoji.${extension(res)}`));
-      if (window.ga) {
-        window.ga("send", "event", this.ui.mode, "download");
-      }
     },
   },
 });
