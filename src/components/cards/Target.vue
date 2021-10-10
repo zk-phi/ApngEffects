@@ -15,8 +15,6 @@ import DevTool from "./DevTool.vue";
 
 import { Effect, WebGLEffect } from "../../types";
 import effects from "../../constants/effects";
-import bgeffects from "../../constants/bgeffects";
-import staticeffects from "../../constants/staticeffects";
 import webgleffects from "../../constants/webgleffects";
 
 import { renderAllCells } from "../../utils/emoji";
@@ -71,8 +69,6 @@ export default defineComponent({
   data() {
     return {
       effects,
-      bgeffects,
-      staticeffects,
       webgleffects,
       TRIMMING_OPTIONS,
       SPEED_OPTIONS,
@@ -82,7 +78,6 @@ export default defineComponent({
         speed: SPEED_OPTIONS[2],
         cells: [1, 1],
         animationInvert: false,
-        staticEffects: [] as EffectOption[],
         effects: [] as EffectOption[],
         webglEffects: [] as WebGLEffectOption[],
         /* advanced */
@@ -165,7 +160,7 @@ export default defineComponent({
           maxSize, this.conf.noCrop,
           animated,
           this.conf.animationInvert,
-          this.conf.effects.concat(this.conf.staticEffects).map((eff) => eff.value),
+          this.conf.effects.map((eff) => eff.value),
           this.conf.webglEffects.map((eff) => eff.value),
           framerate, framecount,
           BINARY_SIZE_LIMIT,
@@ -192,7 +187,6 @@ export default defineComponent({
           </Fieldset>
           <EffectBlock v-model="conf.webglEffects" :effects="webgleffects" />
           <EffectBlock v-model="conf.effects" :effects="effects" />
-          <EffectBlock v-if="showDetails" v-model="conf.effects" :effects="bgeffects" />
           <Fieldset v-if="showDetails" label="開発者向け">
             <Button danger type="text" @click="devMode = true">
               開発者モード
@@ -228,7 +222,6 @@ export default defineComponent({
                 :min="baseImage ? - Math.floor(baseImage.height * 0.5) : 0"
                 :max="baseImage ? Math.ceil(baseImage.height * 1.5) : 0" />
           </Fieldset>
-          <EffectBlock v-model="conf.staticEffects" :effects="staticeffects" />
           <Fieldset v-if="!showDetails" label="アニメ速度">
             <Select
                 v-model="conf.speed"
