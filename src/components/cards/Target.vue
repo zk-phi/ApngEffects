@@ -11,9 +11,10 @@ import Grid from "../global/Grid.vue";
 import GridItem from "../global/GridItem.vue";
 import DevTool from "./DevTool.vue";
 
-import { Effect, WebGLEffect } from "../../types";
+import { Effect, WebGLEffect, Easing } from "../../types";
 import effects from "../../constants/effects";
 import webgleffects from "../../constants/webgleffects";
+import easings from "../../constants/easings";
 
 import { renderAllCells } from "../../utils/emoji";
 import {
@@ -73,6 +74,7 @@ export default defineComponent({
     return {
       effects,
       webgleffects,
+      easings,
       DURATION_OPTIONS,
       FPS_OPTIONS,
       CNUM_OPTIONS,
@@ -84,6 +86,7 @@ export default defineComponent({
         effects: [] as EffectOption[],
         webglEffects: [] as WebGLEffectOption[],
         /* advanced */
+        easing: easings[0],
         cnum: CNUM_OPTIONS[2],
         noCrop: false,
       },
@@ -125,7 +128,7 @@ export default defineComponent({
         renderAllCells(
           this.baseImage,
           maxSize, this.conf.noCrop,
-          animated,
+          animated, this.conf.easing.value,
           this.conf.animationInvert,
           this.conf.effects.map((eff) => eff.value),
           this.conf.webglEffects.map((eff) => eff.value),
@@ -162,6 +165,9 @@ export default defineComponent({
       </GridItem>
       <GridItem>
         <Space vertical xlarge full>
+          <Fieldset label="タイミング">
+            <Select v-model="conf.easing" :options="easings" />
+          </Fieldset>
           <Fieldset label="アニメ長さ">
             <Select
                 v-model="conf.duration"
