@@ -1,7 +1,7 @@
-import GIF from "@dhdbstjr98/gif.js";
+import APNGEncoder from "./encoder";
 import { Animation, Effect, WebGLEffect } from "../types";
 import { webglApplyEffects, webglInitialize } from "./webgl";
-import { cropCanvas, cutoutCanvasIntoCells, fillTransparentPixels } from "./canvas";
+import { cropCanvas, cutoutCanvasIntoCells } from "./canvas";
 
 const webglEnabled = webglInitialize();
 
@@ -21,7 +21,7 @@ function renderFrameUncut(
   webglEffects: WebGLEffect[],
   framerate: number,
   framecount: number,
-  fillStyle: string,
+  fillStyle?: string,
 ) {
   let canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d")!;
@@ -67,7 +67,7 @@ function renderFrameUncut(
   }
 }
 
-let encoders: GIF[][] | null = null;
+let encoders: APNGEncoder[][] | null = null;
 
 /**
  * ASYNC:
@@ -93,6 +93,8 @@ function renderAllCellsFixedSize(
   framecount: number,
   backgroundColor: string,
   transparent: boolean,
+  cnum = Infinity,
+  loop = true,
 ) {
   if (!animated) {
     const img = renderFrameUncut(
@@ -101,7 +103,7 @@ function renderAllCellsFixedSize(
       targetSize * hCells, targetSize * vCells, noCrop,
       animation, animationInvert, effects, webglEffects,
       framerate, framecount,
-      transparent ? "rgba(0, 0, 0, 0)" : backgroundColor,
+      transparent ? null : backgroundColor,
     );
     const cells = noCrop ? (
       cutoutCanvasIntoCells(img, 0, 0, hCells, vCells, targetSize * 2, targetSize * 2)
@@ -118,33 +120,32 @@ function renderAllCellsFixedSize(
       encoders.forEach((row) => { row.forEach((encoder) => encoder.abort()); });
     }
     encoders = [];
-    /* instantiate GIF encoders for each cells */
+    /* instantiate APNG encoders for each cells */
     for (let y = 0; y < vCells; y += 1) {
       const row = [];
       for (let x = 0; x < hCells; x += 1) {
-        const encoder = new GIF({
-          transparent: transparent ? 0xffffff : null,
-          width: targetSize * (noCrop ? 2 : 1),
-          height: targetSize * (noCrop ? 2 : 1),
+        const encoder = new APNGEncoder({
+          w: targetSize * (noCrop ? 2 : 1),
+          h: targetSize * (noCrop ? 2 : 1),
+          cnum: cnum,
+          loops: loop ? Infinity : 1,
         });
         row.push(encoder);
       }
       encoders.push(row);
     }
     const delayPerFrame = 1000 / framerate;
+    const denominator = framecount - (loop ? 0 : 1);
     for (let i = 0; i < framecount; i += 1) {
-      const keyframe = animationInvert ? 1 - (i / framecount) : i / framecount;
+      const keyframe = animationInvert ? 1 - (i / denominator) : i / denominator;
       const frame = renderFrameUncut(
         keyframe, image,
         offsetH, offsetV, srcWidth, srcHeight,
         targetSize * hCells, targetSize * vCells, noCrop,
         animation, animationInvert, effects, webglEffects,
         framerate, framecount,
-        transparent ? "rgba(0, 0, 0, 0)" : backgroundColor,
+        transparent ? null : backgroundColor,
       );
-      if (transparent) {
-        fillTransparentPixels(frame, "#ffffff");
-      }
       const imgCells = noCrop ? (
         cutoutCanvasIntoCells(frame, 0, 0, hCells, vCells, targetSize * 2, targetSize * 2)
       ) : (
@@ -152,17 +153,14 @@ function renderAllCellsFixedSize(
       );
       for (let y = 0; y < vCells; y += 1) {
         for (let x = 0; x < hCells; x += 1) {
-          encoders[y][x].addFrame(imgCells[y][x].getContext("2d")!, { delay: delayPerFrame });
+          encoders[y][x].addFrame(imgCells[y][x].getContext("2d")!, delayPerFrame);
         }
       }
     }
     return Promise.all<Blob[]>(encoders.map((row) => Promise.all<Blob>(row.map((cell) => (
-      new Promise((resolve) => {
-        cell.on("finished", (ret) => {
-          resolve(ret);
-          encoders = null;
-        });
-        cell.render();
+      cell.render().then((ret) => {
+        resolve(ret);
+        encoders = null;
       })
     )))));
   }
