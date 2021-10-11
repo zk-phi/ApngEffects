@@ -16,8 +16,9 @@ export const Base = (args) => ({
     <Target
       :show="show"
       :base-image="baseImage"
+      :sub-image="subImage"
       :width="300"
       :height="300" />
   `,
 });
-Base.args = { show: true, baseImage: img };
+Base.args = { show: true, baseImage: img, subImage: img };

@@ -20,6 +20,7 @@ const sampleEffect = "ctx.translate(0, 0);";
 
 const sampleShader = `precision highp float;
 uniform sampler2D texture;
+uniform sampler2D subTexture;
 varying vec2 vUv;
 
 uniform vec2 resolution;

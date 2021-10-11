@@ -61,6 +61,7 @@ export default defineComponent({
   },
   props: {
     baseImage: { type: Object as PropType<HTMLCanvasElement>, default: null },
+    subImage: { type: Object as PropType<HTMLCanvasElement>, default: null },
     show: { type: Boolean, required: true },
     width: { type: Number, required: true },
     height: { type: Number, required: true },
@@ -96,9 +97,12 @@ export default defineComponent({
   watch: {
     baseImage: {
       handler(): void {
-        if (this.baseImage) {
-          this.render();
-        }
+        this.render();
+      },
+    },
+    subImage: {
+      handler(): void {
+        this.render();
       },
     },
     conf: {
@@ -116,7 +120,7 @@ export default defineComponent({
   },
   methods: {
     render(): void {
-      if (this.baseImage) {
+      if (this.baseImage && this.subImage) {
         const animated = !!(
           this.conf.effects.length
           || this.conf.webglEffects.length
@@ -125,6 +129,7 @@ export default defineComponent({
         const framecount = Math.floor(this.conf.duration.value * this.conf.fps.value);
         renderAllCells(
           this.baseImage,
+          this.subImage,
           this.width, this.height, this.conf.noCrop,
           animated, this.conf.easing.value,
           this.conf.animationInvert,

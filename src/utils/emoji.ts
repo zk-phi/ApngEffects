@@ -8,6 +8,7 @@ const webglEnabled = webglInitialize();
 function renderFrameUncut(
   keyframe: number,
   image: HTMLCanvasElement,
+  subImage: HTMLCanvasElement,
   targetWidth: number,
   targetHeight: number,
   noCrop: boolean,
@@ -35,7 +36,15 @@ function renderFrameUncut(
   );
 
   if (webglEffects.length && webglEnabled) {
-    canvas = webglApplyEffects(canvas, keyframe, webglEffects);
+    let subCanvas = document.createElement("canvas");
+    subCanvas.width = targetWidth * 2;
+    subCanvas.height = targetHeight * 2;
+    subCanvas.getContext("2d")!.drawImage(
+      subImage,
+      0, 0, image.width, image.height,
+      targetWidth / 2, targetHeight / 2, targetWidth, targetHeight,
+    );
+    canvas = webglApplyEffects(canvas, subCanvas, keyframe, webglEffects);
   }
 
   if (noCrop) {
@@ -54,6 +63,7 @@ let encoder: APNGEncoder | null = null;
  */
 export function renderAllCells(
   image: HTMLCanvasElement,
+  subImage: HTMLCanvasElement,
   targetWidth: number,
   targetHeight: number,
   noCrop: boolean,
@@ -84,7 +94,7 @@ export function renderAllCells(
     for (let i = 0; i < framecount; i += 1) {
       const keyframe = animationInvert ? 1 - (i / denominator) : i / denominator;
       let frame = renderFrameUncut(
-        easing(keyframe), image,
+        easing(keyframe), image, subImage,
         targetWidth, targetHeight, noCrop,
         animationInvert, effects, webglEffects,
         framerate, framecount,

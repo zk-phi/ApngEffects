@@ -6,6 +6,7 @@ import Footer from "./global/Footer.vue";
 import Target from "./cards/Target.vue";
 import Result from "./cards/Result.vue";
 import MasterTexture from "./cards/MasterTexture.vue";
+import SubTexture from "./cards/SubTexture.vue";
 import Button from "./inputs/Button.vue";
 import Space from "./global/Space.vue";
 import Grid from "./global/Grid.vue";
@@ -20,6 +21,7 @@ import "../css/destyle.css";
 export default defineComponent({
   components: {
     MasterTexture,
+    SubTexture,
     Target,
     Result,
     Header,
@@ -34,6 +36,7 @@ export default defineComponent({
   data() {
     return {
       baseImage: null as (HTMLCanvasElement | null),
+      subImage: null as (HTMLCanvasElement | null),
       resultImage: null as Blob | null,
       previewMode: false,
       /* ui */
@@ -55,6 +58,9 @@ export default defineComponent({
     onRender(img: HTMLCanvasElement): void {
       this.baseImage = img;
     },
+    onRenderSubImage(img: HTMLCanvasElement): void {
+      this.subImage = img;
+    },
     onDownload(): void {
       if (this.resultImage) {
         saveAs(this.resultImage, `apngeffects.${extension(this.resultImage)}`);
@@ -70,14 +76,29 @@ export default defineComponent({
       <Header />
       <Grid :columns="[[760, 1], [Infinity, 3]]">
         <GridItem :span="2">
-          <MasterTexture
-              v-model:width="width"
-              v-model:height="height"
-              :show="true"
-              @render="onRender" />
+          <Space vertical xlarge full>
+            <Grid :columns="[[Infinity, 2]]">
+              <GridItem>
+                <MasterTexture
+                    v-model:width="width"
+                    v-model:height="height"
+                    :show="true"
+                    @render="onRender" />
+              </GridItem>
+              <GridItem>
+                <SubTexture
+                    default-color="#ffffff"
+                    :width="width"
+                    :height="height"
+                    :show="true"
+                    @render="onRenderSubImage" />
+              </GridItem>
+            </Grid>
+          </Space>
           <Target
               :show="ui.showTargetPanel"
               :base-image="baseImage"
+              :sub-image="subImage"
               :width="width"
               :height="height"
               @render="onRenderTarget" />
