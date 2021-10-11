@@ -5,7 +5,7 @@ import { cropCanvas } from "./canvas";
 
 const webglEnabled = webglInitialize();
 
-function renderFrameUncut(
+function renderFrame(
   keyframe: number,
   image: HTMLCanvasElement,
   subImage: HTMLCanvasElement,
@@ -61,7 +61,7 @@ let encoder: APNGEncoder | null = null;
  * ASYNC:
  * returns a 2d-array of (possibly animated) images of specified size (tragetSize).
  */
-export function renderAllCells(
+export function renderApng(
   image: HTMLCanvasElement,
   subImage: HTMLCanvasElement,
   targetWidth: number,
@@ -93,7 +93,7 @@ export function renderAllCells(
     const denominator = framecount - (loop ? 0 : 1);
     for (let i = 0; i < framecount; i += 1) {
       const keyframe = animationInvert ? 1 - (i / denominator) : i / denominator;
-      let frame = renderFrameUncut(
+      let frame = renderFrame(
         easing(keyframe), image, subImage,
         targetWidth, targetHeight, noCrop,
         animationInvert, effects, webglEffects,

@@ -16,7 +16,7 @@ import effects from "../../constants/effects";
 import webgleffects from "../../constants/webgleffects";
 import easings from "../../constants/easings";
 
-import { renderAllCells } from "../../utils/emoji";
+import { renderApng } from "../../utils/emoji";
 
 type EffectOption = { label: string, value: Effect };
 type WebGLEffectOption = { label: string, value: WebGLEffect };
@@ -126,7 +126,7 @@ export default defineComponent({
         );
 
         const framecount = Math.floor(this.conf.duration.value * this.conf.fps.value);
-        renderAllCells(
+        renderApng(
           this.baseImage,
           this.subImage,
           this.width, this.height, this.conf.noCrop,
