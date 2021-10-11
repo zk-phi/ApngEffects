@@ -17,10 +17,6 @@ import webgleffects from "../../constants/webgleffects";
 import easings from "../../constants/easings";
 
 import { renderAllCells } from "../../utils/emoji";
-import {
-  EMOJI_SIZE,
-  ANIMATED_EMOJI_SIZE,
-} from "../../constants/emoji";
 
 type EffectOption = { label: string, value: Effect };
 type WebGLEffectOption = { label: string, value: WebGLEffect };
@@ -64,10 +60,10 @@ export default defineComponent({
     DevTool,
   },
   props: {
-    baseImage: { type: Object as PropType<HTMLImageElement>, default: null },
+    baseImage: { type: Object as PropType<HTMLCanvasElement>, default: null },
     show: { type: Boolean, required: true },
-    width: { type: Number, default: null },
-    height: { type: Number, default: null },
+    width: { type: Number, required: true },
+    height: { type: Number, required: true },
   },
   emits: [
     "render",
@@ -127,11 +123,9 @@ export default defineComponent({
         );
 
         const framecount = Math.floor(this.conf.duration.value * this.conf.fps.value);
-        const maxWidth = this.width || (animated ? ANIMATED_EMOJI_SIZE : EMOJI_SIZE);
-        const maxHeight = this.height || (animated ? ANIMATED_EMOJI_SIZE : EMOJI_SIZE);
         renderAllCells(
           this.baseImage,
-          maxWidth, maxHeight, this.conf.noCrop,
+          this.width, this.height, this.conf.noCrop,
           animated, this.conf.easing.value,
           this.conf.animationInvert,
           this.conf.effects.map((eff) => eff.value),

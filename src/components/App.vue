@@ -3,14 +3,10 @@ import { defineComponent } from "vue";
 import { saveAs } from "file-saver";
 import Header from "./global/Header.vue";
 import Footer from "./global/Footer.vue";
-import TextSource from "./cards/TextSource.vue";
-import FileSource from "./cards/FileSource.vue";
-import FukumojiSource from "./cards/FukumojiSource.vue";
 import Target from "./cards/Target.vue";
 import Result from "./cards/Result.vue";
+import MasterTexture from "./cards/MasterTexture.vue";
 import Button from "./inputs/Button.vue";
-import TabButton from "./inputs/TabButton.vue";
-import TabGroup from "./inputs/TabGroup.vue";
 import Space from "./global/Space.vue";
 import Grid from "./global/Grid.vue";
 import GridItem from "./global/GridItem.vue";
@@ -18,16 +14,12 @@ import Effect from "./icons/Effect.vue";
 import Back from "./icons/Back.vue";
 import Save from "./icons/Save.vue";
 import Image from "./icons/Image.vue";
-import Text from "./icons/Text.vue";
-import Emoji from "./icons/Emoji.vue";
 import { extension } from "../utils/file";
 import "../css/destyle.css";
 
 export default defineComponent({
   components: {
-    TextSource,
-    FileSource,
-    FukumojiSource,
+    MasterTexture,
     Target,
     Result,
     Header,
@@ -36,40 +28,31 @@ export default defineComponent({
     Grid,
     GridItem,
     Button,
-    TabButton,
-    TabGroup,
-    Effect,
-    Back,
     Save,
-    Text,
     Image,
-    Emoji,
   },
   data() {
     return {
-      baseImage: null as (HTMLImageElement | null),
+      baseImage: null as (HTMLCanvasElement | null),
       resultImage: null as Blob | null,
       previewMode: false,
       /* ui */
       ui: {
-        mode: "text",
         showTargetPanel: false,
         showTargetDetails: false,
       },
+      width: 640,
+      height: 480,
     };
   },
   methods: {
     onSetShowTarget(value: boolean): void {
       this.ui.showTargetPanel = value;
     },
-    onSelectMode(value: string): void {
-      this.ui.mode = value;
-      this.ui.showTargetPanel = false;
-    },
     onRenderTarget(img: Blob): void {
       this.resultImage = img;
     },
-    onRender(img: HTMLImageElement): void {
+    onRender(img: HTMLCanvasElement): void {
       this.baseImage = img;
     },
     onDownload(): void {
@@ -85,33 +68,18 @@ export default defineComponent({
   <div class="app">
     <Space vertical xlarge full>
       <Header />
-
-      <TabGroup>
-        <TabButton :model-value="ui.mode" value="text" @update:model-value="onSelectMode">
-          <Text /> テキスト絵文字
-        </TabButton>
-        <TabButton :model-value="ui.mode" value="file" @update:model-value="onSelectMode">
-          <Image /> 画像絵文字
-        </TabButton>
-        <TabButton :model-value="ui.mode" value="parts" @update:model-value="onSelectMode">
-          <Emoji /> キメラ絵文字
-        </TabButton>
-      </TabGroup>
-
       <Grid :columns="[[760, 1], [Infinity, 3]]">
         <GridItem :span="2">
-          <TextSource
-              :show="ui.mode == 'text' && !ui.showTargetPanel"
-              @render="onRender" />
-          <FileSource
-              :show="ui.mode == 'file' && !ui.showTargetPanel"
-              @render="onRender" />
-          <FukumojiSource
-              :show="ui.mode == 'parts' && !ui.showTargetPanel"
+          <MasterTexture
+              v-model:width="width"
+              v-model:height="height"
+              :show="true"
               @render="onRender" />
           <Target
               :show="ui.showTargetPanel"
               :base-image="baseImage"
+              :width="width"
+              :height="height"
               @render="onRenderTarget" />
         </GridItem>
         <GridItem>
