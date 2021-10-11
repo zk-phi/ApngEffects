@@ -77,12 +77,12 @@ export function renderApng(
   cnum = Infinity,
   loop = true,
 ) {
+  if (encoder) {
+    encoder.abort();
+  }
   if (!animated) {
     return new Promise((resolve) => image.toBlob((blob) => resolve(blob!)));
   } else {
-    if (encoder) {
-      encoder.abort();
-    }
     encoder = new APNGEncoder({
       w: targetWidth * (noCrop ? 2 : 1),
       h: targetHeight * (noCrop ? 2 : 1),
