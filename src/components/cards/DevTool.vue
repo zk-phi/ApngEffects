@@ -56,6 +56,7 @@ export default defineComponent({
         this.buildShader();
       }
     },
+    /* eslint-disable no-console, no-new-func */
     buildEffect(): void {
       try {
         const effectImpl = new Function(

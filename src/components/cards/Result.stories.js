@@ -1,14 +1,11 @@
 import Result from "./Result.vue";
-import image from "../../samples/image.png";
 
 export default {
   title: "cards/Result",
   component: Result,
 };
 
-export const Base = (args) => ({
+export const Base = () => ({
   components: { Result },
-  data: () => args,
-  template: "<Result :images='images' />",
+  template: "<Result />",
 });
-Base.args = { images: [[image, image], [image, image]] };

@@ -7,12 +7,15 @@ type EncoderArgs = {
 
 export default class APNGEncoder {
   private worker: Worker;
+
   private frames: ArrayBuffer[];
+
   private options: EncoderArgs;
+
   private dels: number[];
 
   constructor({ w, h, cnum = Infinity, loops = Infinity }: EncoderArgs) {
-    this.worker = new Worker(new URL('./encoder.worker.ts', import.meta.url));
+    this.worker = new Worker(new URL("./encoder.worker.ts", import.meta.url));
     this.frames = [];
     this.dels = [];
     this.options = { w, h, cnum, loops };
@@ -40,4 +43,4 @@ export default class APNGEncoder {
   abort(): void {
     this.worker.terminate();
   }
-};
+}

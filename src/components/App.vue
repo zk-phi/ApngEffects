@@ -12,7 +12,6 @@ import Space from "./global/Space.vue";
 import Grid from "./global/Grid.vue";
 import GridItem from "./global/GridItem.vue";
 import Save from "./icons/Save.vue";
-import Image from "./icons/Image.vue";
 import { extension } from "../utils/file";
 import "../css/destyle.css";
 
@@ -29,7 +28,6 @@ export default defineComponent({
     GridItem,
     Button,
     Save,
-    Image,
   },
   data() {
     return {

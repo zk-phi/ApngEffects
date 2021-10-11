@@ -6,7 +6,7 @@ export default {
 };
 
 const Template = (args) => ({
-  components: { Space, ColorSample },
+  components: { Space },
   data: () => args,
   template: `
     <Space vertical :small="small" :large="large">

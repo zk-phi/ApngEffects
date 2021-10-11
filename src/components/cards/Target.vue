@@ -11,7 +11,7 @@ import Grid from "../global/Grid.vue";
 import GridItem from "../global/GridItem.vue";
 import DevTool from "./DevTool.vue";
 
-import { Effect, WebGLEffect, Easing } from "../../types";
+import { Effect, WebGLEffect } from "../../types";
 import effects from "../../constants/effects";
 import webgleffects from "../../constants/webgleffects";
 import easings from "../../constants/easings";
@@ -20,7 +20,6 @@ import { renderApng } from "../../utils/emoji";
 
 type EffectOption = { label: string, value: Effect };
 type WebGLEffectOption = { label: string, value: WebGLEffect };
-type SpeedOption = { label: string, value: number };
 
 const DURATION_OPTIONS = [
   { label: "超ゆっくり (4sec)", value: 4 },

@@ -11,7 +11,7 @@ const shader = webglEffectShader(shaderWipe.sourceCode);
 
 const webglTransitionWipeVerticalIn: WebGLEffect = (keyframe) => {
   const program = webglLoadEffectShader(shader);
-  webglSetFloat(program, "keyframe", - keyframe);
+  webglSetFloat(program, "keyframe", -keyframe);
   webglSetVec2(program, "direction", [0, 1]);
   return program;
 };

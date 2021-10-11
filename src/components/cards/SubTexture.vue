@@ -63,6 +63,9 @@ export default defineComponent({
       },
     },
   },
+  mounted(): void {
+    this.render();
+  },
   methods: {
     refreshDefaultSettings(): void {
       if (this.conf.source) {
@@ -106,9 +109,6 @@ export default defineComponent({
       this.refreshDefaultSettings();
     },
   },
-  mounted(): void {
-    this.render();
-  },
 });
 </script>
 
@@ -117,7 +117,7 @@ export default defineComponent({
     <Space vertical xlarge full>
       <Fieldset label="背景">
         <Space vertical>
-          <Color block v-model="conf.color" @update:model-value="conf.transparent = false" />
+          <Color v-model="conf.color" block @update:model-value="conf.transparent = false" />
           <Checkbox v-model="conf.transparent">
             透過
           </Checkbox>

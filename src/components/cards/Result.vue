@@ -33,7 +33,7 @@ export default defineComponent({
 <template>
   <Card :style="transparentBg" title="プレビュー">
     <Space vertical>
-      <img v-if="image" class="result" :src="src" />
+      <img v-if="image" class="result" :src="src">
       <p v-if="image">
         {{ Math.ceil(image.size / 1000) }} KB
         ({{ Math.ceil(image.size / 1024) }} KiB)

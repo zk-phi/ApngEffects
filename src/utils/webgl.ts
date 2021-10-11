@@ -185,7 +185,7 @@ function webglDeleteFrameBuffer(buf: FrameBufferWithTexture) {
 function draw(
   texture: WebGLTexture,
   subTexture: WebGLTexture,
-  frame: WebGLFramebuffer | null
+  frame: WebGLFramebuffer | null,
 ) {
   if (!gl) throw new Error("WebGL not initialized");
   gl.activeTexture(gl.TEXTURE0);

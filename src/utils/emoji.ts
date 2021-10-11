@@ -15,8 +15,6 @@ function renderFrame(
   animationInvert: boolean,
   effects: Effect[],
   webglEffects: WebGLEffect[],
-  framerate: number,
-  framecount: number,
 ) {
   let canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d")!;
@@ -36,7 +34,7 @@ function renderFrame(
   );
 
   if (webglEffects.length && webglEnabled) {
-    let subCanvas = document.createElement("canvas");
+    const subCanvas = document.createElement("canvas");
     subCanvas.width = targetWidth * 2;
     subCanvas.height = targetHeight * 2;
     subCanvas.getContext("2d")!.drawImage(
@@ -76,7 +74,7 @@ export function renderApng(
   framecount: number,
   cnum = Infinity,
   loop = true,
-) {
+): Promise<Blob> {
   if (encoder) {
     encoder.abort();
   }
@@ -86,8 +84,8 @@ export function renderApng(
     encoder = new APNGEncoder({
       w: targetWidth * (noCrop ? 2 : 1),
       h: targetHeight * (noCrop ? 2 : 1),
-      cnum: cnum,
       loops: loop ? Infinity : 1,
+      cnum,
     });
     const delayPerFrame = 1000 / framerate;
     const denominator = framecount - (loop ? 0 : 1);
@@ -97,7 +95,6 @@ export function renderApng(
         easing(keyframe), image, subImage,
         targetWidth, targetHeight, noCrop,
         animationInvert, effects, webglEffects,
-        framerate, framecount,
       );
       if (!noCrop) {
         frame = cropCanvas(frame, 0, 0, targetWidth, targetHeight);

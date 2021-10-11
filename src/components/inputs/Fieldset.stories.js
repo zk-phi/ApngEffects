@@ -1,5 +1,5 @@
 import Fieldset from "./Fieldset.vue";
-import Input from "./Input.vue";
+import Textarea from "./Textarea.vue";
 
 export default {
   title: "molecules/inputs/Fieldset",
@@ -7,14 +7,14 @@ export default {
 };
 
 export const Base = (args) => ({
-  components: { Fieldset, Input },
+  components: { Fieldset, Textarea },
   data: () => ({
     ...args,
     value: "",
   }),
   template: `
     <Fieldset :label="label">
-      <Input v-model="value" />
+      <Textarea v-model="value" :rows="3" />
     </Fieldset>
   `,
 });

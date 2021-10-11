@@ -49,7 +49,10 @@ export default defineComponent({
       handler(): void {
         this.render();
       },
-    }
+    },
+  },
+  mounted(): void {
+    this.render();
   },
   methods: {
     resize(): void {
@@ -57,7 +60,7 @@ export default defineComponent({
         const img = this.conf.source;
         const scale = Math.min(
           1,
-          this.conf.maxResolution / Math.max(img.naturalWidth, img.naturalHeight)
+          this.conf.maxResolution / Math.max(img.naturalWidth, img.naturalHeight),
         );
         this.$emit("update:width", Math.round(img.naturalWidth * scale));
         this.$emit("update:height", Math.round(img.naturalHeight * scale));
@@ -85,9 +88,6 @@ export default defineComponent({
       this.render();
     },
   },
-  mounted(): void {
-    this.render();
-  },
 });
 </script>
 
@@ -96,7 +96,7 @@ export default defineComponent({
     <Space vertical xlarge full>
       <Fieldset label="背景">
         <Space vertical>
-          <Color block v-model="conf.color" @update:model-value="conf.transparent = false" />
+          <Color v-model="conf.color" block @update:model-value="conf.transparent = false" />
           <Checkbox v-model="conf.transparent">
             透過
           </Checkbox>

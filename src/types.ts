@@ -1,5 +1,3 @@
-type DataURL = string;
-
 // Effects are called with CanvasRenderingContext2D before rendering, and
 // expected to configure the canvas. Note that users may enable multiple
 // effects at the same time.
