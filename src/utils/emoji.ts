@@ -54,7 +54,8 @@ let encoder: APNGEncoder | null = null;
  */
 export function renderAllCells(
   image: HTMLImageElement,
-  targetSize: number,
+  targetWidth: number,
+  targetHeight: number,
   noCrop: boolean,
   animated: boolean,
   easing: Easing,
@@ -84,12 +85,12 @@ export function renderAllCells(
       const keyframe = animationInvert ? 1 - (i / denominator) : i / denominator;
       let frame = renderFrameUncut(
         easing(keyframe), image,
-        targetSize, targetSize, noCrop,
+        targetWidth, targetHeight, noCrop,
         animationInvert, effects, webglEffects,
         framerate, framecount,
       );
       if (!noCrop) {
-        frame = cropCanvas(frame, 0, 0, targetSize, targetSize);
+        frame = cropCanvas(frame, 0, 0, targetWidth, targetHeight);
       }
       encoder.addFrame(frame.getContext("2d")!, delayPerFrame);
     }

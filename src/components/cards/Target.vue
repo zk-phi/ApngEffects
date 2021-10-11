@@ -66,6 +66,8 @@ export default defineComponent({
   props: {
     baseImage: { type: Object as PropType<HTMLImageElement>, default: null },
     show: { type: Boolean, required: true },
+    width: { type: Number, default: null },
+    height: { type: Number, default: null },
   },
   emits: [
     "render",
@@ -125,10 +127,11 @@ export default defineComponent({
         );
 
         const framecount = Math.floor(this.conf.duration.value * this.conf.fps.value);
-        const maxSize = animated ? ANIMATED_EMOJI_SIZE : EMOJI_SIZE;
+        const maxWidth = this.width || (animated ? ANIMATED_EMOJI_SIZE : EMOJI_SIZE);
+        const maxHeight = this.height || (animated ? ANIMATED_EMOJI_SIZE : EMOJI_SIZE);
         renderAllCells(
           this.baseImage,
-          maxSize, this.conf.noCrop,
+          maxWidth, maxHeight, this.conf.noCrop,
           animated, this.conf.easing.value,
           this.conf.animationInvert,
           this.conf.effects.map((eff) => eff.value),
