@@ -7,7 +7,7 @@ const webglEnabled = webglInitialize();
 
 function renderFrameUncut(
   keyframe: number,
-  image: HTMLImageElement,
+  image: HTMLCanvasElement,
   targetWidth: number,
   targetHeight: number,
   noCrop: boolean,
@@ -53,7 +53,7 @@ let encoder: APNGEncoder | null = null;
  * returns a 2d-array of (possibly animated) images of specified size (tragetSize).
  */
 export function renderAllCells(
-  image: HTMLImageElement,
+  image: HTMLCanvasElement,
   targetWidth: number,
   targetHeight: number,
   noCrop: boolean,
