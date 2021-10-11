@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import Card from "../global/Card.vue";
+import Space from "../global/Space.vue";
 
 const transparentBg = {
   backgroundPosition: "0 0, 10px 10px",
@@ -13,7 +14,7 @@ const transparentBg = {
 
 export default defineComponent({
   components: {
-    Card,
+    Card, Space,
   },
   props: {
     image: { type: Object as PropType<Blob>, default: null },
@@ -31,7 +32,13 @@ export default defineComponent({
 
 <template>
   <Card :style="transparentBg" title="プレビュー">
-    <img v-if="image" class="result" :src="src" />
+    <Space vertical>
+      <img v-if="image" class="result" :src="src" />
+      <p v-if="image">
+        {{ Math.ceil(image.size / 1000) }} KB
+        ({{ Math.ceil(image.size / 1024) }} KiB)
+      </p>
+    </Space>
   </Card>
 </template>
 
