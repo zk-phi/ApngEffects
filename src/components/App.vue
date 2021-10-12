@@ -111,11 +111,11 @@ export default defineComponent({
 <style>
 :root {
   /* colors */
-  --fg: #333;
-  --bg: #fff;
-  --accentBg: #fafafa;
-  --distantFg: #fff;
-  --border: #888;
+  --fg: #ccc;
+  --bg: #333;
+  --accentBg: #3a3a3a;
+  --distantFg: var(--bg);
+  --border: #666;
   --primary: #edad0b;
   --primaryHover: #f2c145;
   --primaryActive: #d59b0a;
@@ -175,5 +175,7 @@ html {
     sans-serif;
   font-size: var(--fontSizeMedium);
   line-height: 1;
+  color: var(--fg);
+  background-color: var(--bg);
 }
 </style>
