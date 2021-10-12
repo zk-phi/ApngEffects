@@ -60,7 +60,7 @@ export default defineComponent({
 
 <template>
   <div class="app">
-    <Space vertical xlarge full>
+    <Space vertical large full>
       <Header />
       <Grid :columns="[[Infinity, 3]]">
         <GridItem :span="2">
@@ -92,7 +92,7 @@ export default defineComponent({
           </Space>
         </GridItem>
         <GridItem>
-          <Space vertical>
+          <Space large vertical>
             <Result :image="resultImage" />
             <Button v-if="baseImage" type="primary" @click="onDownload">
               <template #icon>
@@ -136,24 +136,22 @@ export default defineComponent({
   --multilineTextLineHeight: 1.5;
 
   /* layout */
+  --spacingSmall: 0.25rem;
+  --spacingInlineSmall: 0.375rem;
+  --spacingMedium: 0.5rem;
+  --spacingLarge: 1rem;
+  --spacingXLarge: 1.75rem;
+  --paddingV: 0.75rem;
+  --paddingH: 1rem;
+  --padding: var(--paddingV) var(--paddingH);
+  --paddingMinimal: 4px;
   --borderRadiusSmall: 1px;
   --borderRadius: 2px;
-  --paddingXLarge: 20px 22px;
-  --paddingLarge: 14px 16px;
-  --paddingMedium: 10px 12px;
-  --paddingSmall: 8px 10px;
-  --paddingMinimal: 4px;
-  --marginXLarge: 20px;
-  --marginLarge: 16px;
-  --marginMedium: 12px;
-  --marginSmall: 8px;
-  --marginXSmall: 4px;
 
   /* other */
   --textareaLineHeight: 1.4;
-  --selectPadding: 10px calc(12px + 1em) 10px 12px;
-  --numberPadding: 10px calc(12px + 2em) 10px 12px;
-  --inputAddonTop: 10px; /* paddingMedium[0] */
+  --selectPadding: var(--paddingV) calc(var(--paddingH) + 1rem) var(--paddingV) var(--paddingH);
+  --numberPadding: var(--paddingV) calc(var(--paddingH) + 2rem) var(--paddingV) var(--paddingH);
   --sliderRailHeight: 0.375em;
   --sliderMarkHeight: 0.75em;
   --sliderKnobSize: 1.25em;
@@ -162,13 +160,13 @@ export default defineComponent({
   --colorSliderRailHeight: 1.125em;
   --mediaIconSize: 34px;
   --popoverShadow: rgb(0 0 0 / 19%) 0 10px 20px, rgb(0 0 0 / 23%) 0 6px 6px;
-  --tabButtonPadding: 0 6px 8px;
+  /* -3px for borders */
+  --tabButtonPadding: 0 var(--paddingH) calc(var(--paddingV) - 3px);
 }
-</style>
 
-<style scoped>
-.app {
-  padding: var(--paddingLarge);
+/* stylelint-disable-next-line selector-max-type */
+html {
+  padding: var(--spacingXLarge);
   font-family:
     "Helvetica Neue",
     Arial,
@@ -176,6 +174,7 @@ export default defineComponent({
     "Hiragino Sans",
     Meiryo,
     sans-serif;
+  font-size: var(--fontSizeMedium);
   line-height: 1;
 }
 </style>
