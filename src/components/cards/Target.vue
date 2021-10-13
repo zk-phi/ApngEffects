@@ -145,7 +145,7 @@ export default defineComponent({
 
 <template>
   <Card v-if="show && !devMode">
-    <Grid :columns="[[Infinity, 3]]">
+    <Grid :columns="[[Infinity, 3]]" xlarge>
       <GridItem>
         <Space vertical xlarge full>
           <Fieldset label="再生設定">
