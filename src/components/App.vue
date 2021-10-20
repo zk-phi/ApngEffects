@@ -114,6 +114,8 @@ export default defineComponent({
   --fg: #ccc;
   --bg: #333;
   --accentBg: #3a3a3a;
+  --light: var(--fg);
+  --dark: var(--bg);
   --distantFg: var(--bg);
   --border: #666;
   --primary: #edad0b;
