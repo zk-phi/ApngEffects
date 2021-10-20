@@ -111,13 +111,13 @@ export default defineComponent({
 <style>
 :root {
   /* colors */
-  --fg: #ccc;
-  --bg: #333;
-  --accentBg: #3a3a3a;
-  --light: var(--fg);
-  --dark: var(--bg);
+  --fg: #333;
+  --bg: #fff;
+  --accentBg: #fafafa;
+  --light: var(--bg);
+  --dark: var(--fg);
   --distantFg: var(--bg);
-  --border: #666;
+  --border: #888;
   --primary: #edad0b;
   --primaryHover: #f2c145;
   --primaryActive: #d59b0a;
@@ -163,6 +163,17 @@ export default defineComponent({
   --mediaIconSize: 34px;
   --popoverShadow: rgb(0 0 0 / 19%) 0 10px 20px, rgb(0 0 0 / 23%) 0 6px 6px;
   --tabButtonPadding: 0 calc(var(--paddingH) * 0.75) calc(var(--paddingV) - 3px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fg: #ccc;
+    --bg: #333;
+    --accentBg: #3a3a3a;
+    --light: var(--fg);
+    --dark: var(--bg);
+    --border: #666;
+  }
 }
 
 /* stylelint-disable-next-line selector-max-type */
