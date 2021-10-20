@@ -3,15 +3,6 @@ import { defineComponent, PropType } from "vue";
 import Card from "../global/Card.vue";
 import Space from "../global/Space.vue";
 
-const transparentBg = {
-  backgroundPosition: "0 0, 10px 10px",
-  backgroundSize: "20px 20px",
-  backgroundImage: `
-    linear-gradient(45deg, #444 25%, transparent 25%, transparent 75%, #444 75%, #444),
-    linear-gradient(45deg, #444 25%, transparent 25%, transparent 75%, #444 75%, #444)
-  `,
-};
-
 export default defineComponent({
   components: {
     Card, Space,
@@ -19,9 +10,6 @@ export default defineComponent({
   props: {
     image: { type: Object as PropType<Blob>, default: null },
   },
-  data: () => ({
-    transparentBg,
-  }),
   computed: {
     src(): string | null {
       return this.image ? URL.createObjectURL(this.image) : null;
@@ -31,7 +19,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <Card :style="transparentBg" title="プレビュー">
+  <Card class="result" title="プレビュー">
     <Space vertical large>
       <img v-if="image" class="result" :src="src">
       <p v-if="image">
@@ -44,6 +32,25 @@ export default defineComponent({
 
 <style scoped>
 .result {
+  background-image:
+    linear-gradient(
+      45deg,
+      var(--bg) 25%,
+      transparent 25%,
+      transparent 75%,
+      var(--bg) 75%,
+      var(--bg)
+    ),
+    linear-gradient(
+      45deg,
+      var(--bg) 25%,
+      transparent 25%,
+      transparent 75%,
+      var(--bg) 75%,
+      var(--bg)
+    );
+  background-position: 0 0, 10px 10px;
+  background-size: 20px 20px;
   border: 1px solid var(--border);
 }
 </style>
