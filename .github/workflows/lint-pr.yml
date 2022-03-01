@@ -8,7 +8,7 @@ jobs:
   lint-css:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v2.4.0
       - name: Reconfigure git to use HTTP authentication (actions/setup-node#214)
         run: >
@@ -26,7 +26,7 @@ jobs:
   lint-js:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v2.4.0
       - name: Reconfigure git to use HTTP authentication (actions/setup-node#214)
         run: >
@@ -44,7 +44,7 @@ jobs:
   e2e-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v2.4.0
       - name: Reconfigure git to use HTTP authentication (actions/setup-node#214)
         run: >
@@ -62,7 +62,7 @@ jobs:
   build-storybook:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v2.4.0
       - name: Reconfigure git to use HTTP authentication (actions/setup-node#214)
         run: >
@@ -80,7 +80,7 @@ jobs:
   build-app:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v2.4.0
       - name: Reconfigure git to use HTTP authentication (actions/setup-node#214)
         run: >
