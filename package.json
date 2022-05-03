@@ -33,7 +33,7 @@
     "@types/color-convert": "^2.0.0",
     "@types/file-saver": "^2.0.3",
     "@types/google.analytics": "^0.0.42",
-    "@types/jest": "^26.0.24",
+    "@types/jest": "^27.5.0",
     "@types/puppeteer": "^5.4.4",
     "@typescript-eslint/eslint-plugin": "^4.28.4",
     "@typescript-eslint/parser": "^4.28.4",
